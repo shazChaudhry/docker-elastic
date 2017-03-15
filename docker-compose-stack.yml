@@ -1,0 +1,100 @@
+version: "3.1"
+ 
+services:
+#    
+#    swarm-listener:
+#        image: 
+#            vfarcic/docker-flow-swarm-listener
+#        networks:
+#            - proxy
+#        volumes:
+#            - /var/run/docker.sock:/var/run/docker.sock
+#        environment:
+#            - DF_NOTIFY_CREATE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/reconfigure
+#            - DF_NOTIFY_REMOVE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/remove
+#        logging:
+#          driver: gelf
+#          options:
+#            gelf-address: udp://127.0.0.1:12201
+#        deploy:
+#            placement:
+#                constraints: [node.role == manager]
+# 
+#    proxy:
+#        image: 
+#            vfarcic/docker-flow-proxy
+#        ports:
+#            - 80:80
+#            - 443:443
+#        networks:
+#            - proxy
+#        environment:
+#            - LISTENER_ADDRESS=swarm-listener
+#            - MODE=swarm
+#        logging:
+#          driver: gelf
+#          options:
+#            gelf-address: udp://127.0.0.1:12201
+#        deploy:
+#            replicas: 1
+#    
+#    jenkins:
+#        image: stefanprodan/jenkins
+#        environment:
+#            - JENKINS_OPTS='--prefix=/jenkins'
+#        networks:
+#            - proxy
+#        volumes:
+#            - /var/run/docker.sock:/var/run/docker.sock
+#            - java_home:/var/jenkins_home
+#            - ansible_home:/etc/ansible
+#        logging:
+#          driver: gelf
+#          options:
+#            gelf-address: udp://127.0.0.1:12201
+#        deploy:
+#            labels:
+#                - com.df.notify=true
+#                - com.df.distribute=true
+#                - com.df.servicePath=/jenkins
+#                - com.df.port=8080
+#                
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.2.2  
+        volumes:
+            - elasticsearchData:/usr/share/elasticsearch/data
+        networks:
+            - logging
+        environment:
+            xpack.security.enabled: "false"
+            xpack.monitoring.enabled: "false"
+            xpack.graph.enabled: "false"
+            xpack.watcher.enabled: "false"
+            
+    logstash:
+        image: docker.elastic.co/logstash/logstash:5.2.2
+        ports:
+          - "12201:12201/udp"
+        networks:
+            - logging
+        volumes:
+            - ./elk/logstash/config/pipeline:/usr/share/logstash/pipeline
+            - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+        
+    kibana:
+        image: docker.elastic.co/kibana/kibana:5.2.2
+        ports:
+            - 5601:5601
+        networks:
+            - logging
+        volumes:
+            - ./elk/kibana/config:/usr/share/kibana/config
+      
+networks:
+#    proxy:
+    logging:
+ 
+volumes:
+#    java_home:
+#    ansible_home:
+    elasticsearchData:
