@@ -8,11 +8,6 @@ services:
             - elasticsearchData:/usr/share/elasticsearch/data
         networks:
             - logging
-        environment:
-            xpack.security.enabled: "false"
-            xpack.monitoring.enabled: "false"
-            xpack.graph.enabled: "false"
-            xpack.watcher.enabled: "false"
             
     logstash:
         image: docker.elastic.co/logstash/logstash:5.2.2
@@ -22,7 +17,6 @@ services:
             - logging
         volumes:
             - ./elk/logstash/config/pipeline:/usr/share/logstash/pipeline
-            - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
         
     kibana:
         image: docker.elastic.co/kibana/kibana:5.2.2
@@ -30,11 +24,11 @@ services:
             - 5601:5601
         networks:
             - logging
-        volumes:
-            - ./elk/kibana/config:/usr/share/kibana/config
-      
+        environment:
+            - ELASTICSEARCH_URL=http://elasticsearch:9200
+
 networks:
     logging:
- 
+
 volumes:
     elasticsearchData:
