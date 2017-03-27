@@ -1,0 +1,1 @@
+docker stack rm logging
