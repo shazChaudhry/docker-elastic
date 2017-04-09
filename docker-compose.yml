@@ -3,7 +3,7 @@ version: "3.1"
 services:
             
     logstash:
-        image: docker.elastic.co/logstash/logstash:5.2.2
+        image: docker.elastic.co/logstash/logstash:5.3.0
         ports:
           - "12201:12201/udp"
         networks:
@@ -12,14 +12,14 @@ services:
             - ./elk/logstash/config/pipeline:/usr/share/logstash/pipeline
                 
     elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.2.2  
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.3.0
         volumes:
             - elasticsearchData:/usr/share/elasticsearch/data
         networks:
             - logging
         
     kibana:
-        image: docker.elastic.co/kibana/kibana:5.2.2
+        image: docker.elastic.co/kibana/kibana:5.3.0
         ports:
             - 5601:5601
         networks:
