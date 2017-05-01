@@ -2,16 +2,17 @@
 - As a DevOps team member I want to install [Elastic Stack](https://www.elastic.co/products) so that I can collect all application logs centrally for searching, visualizing, analysing and reporting purpose
 
 **Assumptions**
-* Your infrastucture is based on ubuntu/xenial64
-* Your infrastructure has [Docker Swarm cluster](https://docs.docker.com/get-started/part4/#understanding-swarm-clusters) configuration
+* Your infrastucture is required to be based on ubuntu/xenial64
+* Your infrastructure is required to have [Docker Swarm cluster](https://docs.docker.com/get-started/part4/#understanding-swarm-clusters) configuration
 * On each cluster node, maximum map count check _(required for Elasticsearch)_ is set by running `sysctl -w vm.max_map_count=262144` command
-* Your Docker services are configured with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver. These services send console logs to Elastic Stack
+* Your Docker services are required to be configured with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver _(these services send console logs to Elastic Stack)_
   * [List of supported logging drivers](https://docs.docker.com/engine/admin/logging/overview/#supported-logging-drivers)
 
 **Prerequisite**
 * Set up a development infrastructre by following [Infra as Code](https://github.com/shazChaudhry/infra) repo on github
 
 **Instructions**
+* Log into the master node in the Docker Swarm cluster setup above
 * Clone this repository and change directory to where repo is cloned to
 * Deploy stack by run the following command:
   * `docker stack deploy -c docker-compose.yml logging`
