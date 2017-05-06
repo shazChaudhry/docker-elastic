@@ -1,0 +1,21 @@
+sudo: required
+env:
+  - FILEBEAT_VERSION=5.4.0
+before_install:
+  # Install latest version docker CE
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
+  - docker version
+  # Install latest version of docker-compose
+  - sudo apt-get install -y python-pip && pip install --upgrade pip
+  - sudo pip install docker-compose
+  - docker-compose version
+services:
+  - docker
+
+script:
+  - docker-compose up -d
+  - sleep 60 #wait for jenkins to come up
+  - docker-compose images
+  - docker ps -a
+  - docker-compose down
