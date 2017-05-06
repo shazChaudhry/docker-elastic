@@ -1,3 +1,6 @@
+[![Build Status on Travis](https://travis-ci.org/shazChaudhry/logging.svg?branch=master "CI build status on Travis")](https://travis-ci.org/shazChaudhry/logging)
+[![Docker Repository on Quay](https://quay.io/repository/shazchaudhry/logging/status "Docker Repository on Quay")](https://quay.io/repository/shazchaudhry/logging)
+
 **User story**
 - As a DevOps team member I want to install [Elastic Stack](https://www.elastic.co/products) so that I can collect all application logs centrally for searching, visualizing, analysing and reporting purpose
 
