@@ -1,21 +1,29 @@
 sudo: required
-env:
-  - FILEBEAT_VERSION=5.4.0
 before_install:
   # Install latest version docker CE
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
   - docker version
   # Install latest version of docker-compose
-  - sudo apt-get install -y python-pip && pip install --upgrade pip
-  - sudo pip install docker-compose
-  - docker-compose version
+  #- sudo apt-get update -qq
+  #- sudo apt-get install -qq python-pip && pip install --upgrade pip
+  #- sudo pip install docker-compose
+  #- docker-compose version
 services:
   - docker
 
+before_script:
+  # https://www.elastic.co/guide/en/elasticsearch/reference/5.0/vm-max-map-count.html
+  - sudo sysctl -w vm.max_map_count=262144
+
 script:
-  - docker-compose up -d
-  - sleep 60 #wait for jenkins to come up
-  - docker-compose images
-  - docker ps -a
-  - docker-compose down
+  - docker swarm init
+  - ./deployStack.sh
+  - sleep 180 #wait for the stack to come up
+
+after_script:
+  - docker stack services logging
+  - docker stack ps logging
+  #List all Elasticsearch Indices. One entry sould be for filebeat
+  - curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/indices?v&pretty'
+  - ./removeStack.sh

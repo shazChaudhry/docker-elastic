@@ -1,5 +1,4 @@
 [![Build Status on Travis](https://travis-ci.org/shazChaudhry/logging.svg?branch=master "CI build status on Travis")](https://travis-ci.org/shazChaudhry/logging)
-[![Docker Repository on Quay](https://quay.io/repository/shazchaudhry/logging/status "Docker Repository on Quay")](https://quay.io/repository/shazchaudhry/logging)
 
 **User story**
 - As a DevOps team member I want to install [Elastic Stack](https://www.elastic.co/products) so that I can collect all application logs centrally for searching, visualizing, analysing and reporting purpose
@@ -17,13 +16,14 @@
 **Instructions**
 * Log into the master node in the Docker Swarm cluster setup above
 * Clone this repository and change directory to where repo is cloned to
-* Deploy stack by run the following command:
-  * `docker stack deploy -c docker-compose.yml logging`
-* Check status of the stack services by running the following command:
+* Deploy stack by running the following command:
+  * `ELASTIC_VERSION=5.4.0 docker stack deploy -c docker-compose.yml logging`
+* Check status of the stack services by running the following commands:
   *   `docker stack services logging`
+  *   `docker stack ps logging`
 
 **Testing**
-* Wait until all logging stack services are up and running
+* Wait until all stack services are up and running
 * Run jenkins container on one of the Docker Swarm node as follows:
   * `docker run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://node1:12201 -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/jenkins`
 * Login at [http://node1:5601](http://node1:5601) _(Kibana)_  which should show Management tab
