@@ -18,6 +18,8 @@ before_script:
 
 script:
   - docker swarm init
+  - docker node ls
+  - chmod +x *.sh
   - ./deployStack.sh
   - sleep 180 #wait for the stack to come up
 
