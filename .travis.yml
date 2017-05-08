@@ -5,16 +5,17 @@ before_install:
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
   - docker version
   # Install latest version of docker-compose
-  #- sudo apt-get update -qq
-  #- sudo apt-get install -qq python-pip && pip install --upgrade pip
-  #- sudo pip install docker-compose
-  #- docker-compose version
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq python-pip && pip install --upgrade pip
+  - sudo pip install docker-compose
+  - docker-compose version
 services:
   - docker
 
 before_script:
   # https://www.elastic.co/guide/en/elasticsearch/reference/5.0/vm-max-map-count.html
   - sudo sysctl -w vm.max_map_count=262144
+  - docker-compose pull
 
 script:
   - docker swarm init
