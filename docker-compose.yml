@@ -32,8 +32,26 @@ services:
         environment:
             - ELASTICSEARCH_URL=http://elasticsearch:9200
 
+    metricbeat:
+        image: quay.io/shazchaudhry/docker-metricbeat
+        hostname: metricbeat
+        volumes:
+          - metricmeat_data:/var/lib/metricmeat
+          - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - logging
+        environment:
+          - HOST=elasticsearch
+          - PORT=9200
+          - PROTOCOL=http
+          - USERNAME=elastic
+          - PASSWORD=changeme
+        deploy:
+            mode: global
+
 networks:
     logging:
 
 volumes:
     elasticsearchData:
+    metricmeat_data:
