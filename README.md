@@ -11,7 +11,7 @@
   * [List of supported logging drivers](https://docs.docker.com/engine/admin/logging/overview/#supported-logging-drivers)
 
 **Prerequisite**
-* Set up a development infrastructre by following [Infra as Code](https://github.com/shazChaudhry/infra) repo on github
+* Set up a development infrastructre by following [Infra as Code](https://github.com/shazChaudhry/infra) repo on github _(Optional as you might already have your own infra up and running)_
 
 **Instructions**
 * Log into the master node in the Docker Swarm cluster setup above
@@ -26,7 +26,7 @@
 * Wait until all stack services are up and running
 * Run jenkins container on one of the Docker Swarm node as follows:
   * `docker run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://node1:12201 -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/jenkins`
-* Login at [http://node1:5601](http://node1:5601) _(Kibana)_  which should show Management tab
+* Login at `http://<HOSTNAME>:5601` _(Kibana)_  which should show Management tab
   * username = `elastic`
   * password = `changeme`
 * On the Kibana Management tab, configure an index pattern
@@ -37,3 +37,4 @@
 **References**
 - [Installing Elastic Stack](https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html)
 - [Elastic Examples](https://github.com/elastic/examples)
+- [ Machine Learning in the Elastic Stack - YouTube](https://www.youtube.com/watch?v=n6xW6YWYgs0&feature=youtu.be)
