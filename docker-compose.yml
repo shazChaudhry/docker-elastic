@@ -4,6 +4,7 @@ services:
 
     logstash:
         image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
+        hostname: logstash
         ports:
           - "12201:12201/udp"
         networks:
@@ -13,6 +14,7 @@ services:
 
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+        hostname: elasticsearch
         ports:
             - 9200:9200
         volumes:
@@ -22,6 +24,7 @@ services:
 
     kibana:
         image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
+        hostname: kibana
         ports:
             - 5601:5601
         networks:
