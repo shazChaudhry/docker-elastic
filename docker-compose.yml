@@ -34,7 +34,6 @@ services:
 
     metricbeat:
         image: quay.io/shazchaudhry/docker-metricbeat
-        hostname: metricbeat
         volumes:
           - metricmeat_data:/var/lib/metricmeat
           - /var/run/docker.sock:/var/run/docker.sock
