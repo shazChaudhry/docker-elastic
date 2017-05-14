@@ -35,6 +35,10 @@
   * Index name or pattern = `logstash-*`
   * Time-field name = `@timestamp`
 * Click on Kibana Discover tab to view jenkins console logs
+* On the Kibana Management tab, configure an index pattern
+  * Index name or pattern = `metricbeat-*`
+  * Time-field name = `@timestamp`
+* Click on Kibana Discover tab to view system logs
 
 **References**
 - [Installing Elastic Stack](https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html)
