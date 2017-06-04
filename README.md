@@ -4,7 +4,7 @@
 - As a DevOps team member I want to install [Elastic Stack](https://www.elastic.co/products) so that I can collect all application and system logs centrally for searching, visualizing, analysing and reporting purpose
 
 **Assumptions**
-* Your infrastucture is required to be based on ubuntu/xenial64
+* Your infrastucture is required to be based on ubuntu
 * Your infrastructure is required to have [Docker Swarm cluster](https://docs.docker.com/get-started/part4/#understanding-swarm-clusters) configuration
 * Your Docker services are required to be configured with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver _(these services send console logs to Elastic Stack)_
   * [List of supported logging drivers](https://docs.docker.com/engine/admin/logging/overview/#supported-logging-drivers)
@@ -18,7 +18,7 @@
 * Log into the master node in the Docker Swarm cluster setup above
 * Clone this repository and change directory to where repo is cloned to
 * Deploy stack by running the following command:
-  * `ELASTIC_VERSION=5.4.0 docker stack deploy -c docker-compose.yml logging`
+  * `ELASTIC_VERSION=5.4.1 docker stack deploy -c docker-compose.yml logging`
 * Check status of the stack services by running the following commands:
   *   `docker stack services logging`
   *   `docker stack ps logging`
@@ -28,7 +28,7 @@
 * Run jenkins container on one of the Docker Swarm node as follows:
   * `docker run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://node1:12201 -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/jenkins`
     * Note that _`--log-driver=gelf --log-opt gelf-address=udp://node1:12201`_ send container output to Elastic stack
-* Login at `http://<HOSTNAME>:5601` _(Kibana)_  which should show Management tab
+* Login at `http://node1:5601` _(Kibana)_  which should show Management tab
   * username = `elastic`
   * password = `changeme`
 * On the Kibana Management tab, configure an index pattern
@@ -38,7 +38,7 @@
 * On the Kibana Management tab, configure an index pattern
   * Index name or pattern = `metricbeat-*`
   * Time-field name = `@timestamp`
-* Click on Kibana Discover tab to view system logs
+* Click on Kibana Discover tab to view container system/container metric send by metricbeat
 
 **References**
 - [Installing Elastic Stack](https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html)
