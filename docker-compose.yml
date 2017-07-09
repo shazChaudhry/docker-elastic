@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3.3"
 
 services:
 
@@ -33,9 +33,9 @@ services:
             - ELASTICSEARCH_URL=http://elasticsearch:9200
 
     metricbeat:
-        image: quay.io/shazchaudhry/docker-metricbeat
+        image: quay.io/shazchaudhry/docker-metricbeat:${ELASTIC_VERSION}
         volumes:
-          - metricmeat_data:/var/lib/metricmeat
+          - metricmeat_data:/usr/share/metricbeat/data
           - /var/run/docker.sock:/var/run/docker.sock
         networks:
             - logging
