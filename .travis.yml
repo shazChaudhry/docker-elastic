@@ -22,7 +22,7 @@ script:
   - chmod +x *.sh
   - ./deployStack.sh
   - sleep 180 #wait for the stack to come up
-  - docker run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201 -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/jenkins
+  - docker run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201 jenkinsci/jenkins
   - sleep 120 #wait for the stack to come up
 
 after_script:
