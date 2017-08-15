@@ -9,6 +9,7 @@
 **Prerequisite**
 * Infrastructre is setup in [Docker swarm mode](https://docs.docker.com/engine/swarm/)
 * On each cluster node, maximum map count check _(required for Elasticsearch)_ is set by running `sysctl -w vm.max_map_count=262144` command
+* On each cluster node, grant explicit access to the Metricbeat user with a filesystem ACL by running `setfacl -m u:1000:rw /var/run/docker.sock` command. Otherwise, docker stats will not be shown.
 
 
 **Installation instructions**

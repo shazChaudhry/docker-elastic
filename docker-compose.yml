@@ -31,9 +31,29 @@ services:
             - logging
         environment:
             - ELASTICSEARCH_URL=http://elasticsearch:9200
+    metricbeat:
+        image: quay.io/shazchaudhry/docker-metricbeat:${ELASTIC_VERSION:-5.5.1}
+        volumes:
+          - metricbeatData:/usr/share/metricbeat/data
+          - /proc:/hostfs/proc:ro
+          - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+          - /:/hostfs:ro
+          - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - logging
+        environment:
+          - HOST=elasticsearch
+          - PORT=9200
+          - PROTOCOL=http
+          - USERNAME=elastic
+          - PASSWORD=changeme
+        deploy:
+            mode: global
+        command: metricbeat -e  -system.hostfs=/hostfs
 
 networks:
     logging:
 
 volumes:
     elasticsearchData:
+    metricbeatData:
