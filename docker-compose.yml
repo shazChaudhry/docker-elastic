@@ -15,12 +15,42 @@ services:
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.5.1}
         hostname: elasticsearch
+        environment:
+            - cluster.name=docker-cluster
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ulimits:
+            memlock:
+              soft: -1
+              hard: -1
         ports:
             - 9200:9200
         volumes:
             - elasticsearchData:/usr/share/elasticsearch/data
         networks:
             - logging
+        deploy:
+          resources:
+            limits:
+              memory: 1g
+
+    elasticsearch2:
+        image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.5.1}
+        environment:
+            - cluster.name=docker-cluster
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+            - "discovery.zen.ping.unicast.hosts=elasticsearch"
+        ulimits:
+            memlock:
+              soft: -1
+              hard: -1
+        volumes:
+            - elasticsearchData2:/usr/share/elasticsearch/data
+        networks:
+            - logging
+        deploy:
+          resources:
+            limits:
+              memory: 1g
 
     kibana:
         image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-5.5.1}
@@ -31,6 +61,7 @@ services:
             - logging
         environment:
             - ELASTICSEARCH_URL=http://elasticsearch:9200
+
     metricbeat:
         image: quay.io/shazchaudhry/docker-metricbeat:${ELASTIC_VERSION:-5.5.1}
         volumes:
@@ -56,4 +87,5 @@ networks:
 
 volumes:
     elasticsearchData:
+    elasticsearchData2:
     metricbeatData:
