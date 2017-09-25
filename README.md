@@ -17,10 +17,10 @@
 * Login to the master node in your Docker Swarm cluster
 * Clone this repository and change directory to where repo is cloned to
 * Deploy stack by running the following command:
-  * `ELASTIC_VERSION=5.5.1 docker stack deploy -c docker-compose.yml logging`
+  * `ELASTIC_VERSION=5.5.1 docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
-  *   `docker stack services logging`
-  *   `docker stack ps logging`
+  *   `docker stack services elastic`
+  *   `docker stack ps elastic`
 
 **Testing**
 * Wait until all stack services are up and running
