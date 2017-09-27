@@ -21,8 +21,6 @@
 *.zip
 *_token
 .vagrant
-Vagrantfile
-
 
 # Logs and databases #
 ######################

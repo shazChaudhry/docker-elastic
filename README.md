@@ -8,7 +8,7 @@
 
 **Prerequisite**
 * Infrastructre is setup in [Docker swarm mode](https://docs.docker.com/engine/swarm/)
-* On each cluster node, ensure maximum map count check _(required for Elasticsearch)_ is set 
+* On each cluster node, ensure maximum map count check _(required for Elasticsearch)_ is set
   * `sysctl -w vm.max_map_count=262144` command
 * If Metricbeat is being run then on each cluster node, grant explicit access to the Metricbeat user with a filesystem ACL by running `setfacl -m u:1000:rw /var/run/docker.sock` command. Otherwise, docker stats will not be shown.
 
@@ -17,7 +17,7 @@
 * Login to the master node in your Docker Swarm cluster
 * Clone this repository and change directory to where repo is cloned to
 * Deploy stack by running the following command:
-  * `ELASTIC_VERSION=5.5.1 docker stack deploy -c docker-compose.yml elastic`
+  * `ELASTIC_VERSION=5.6.2 docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
   *   `docker stack services elastic`
   *   `docker stack ps elastic`
