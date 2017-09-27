@@ -1,2 +1,3 @@
 #!/bin/bash
-docker stack rm logging
+
+docker stack rm elastic
