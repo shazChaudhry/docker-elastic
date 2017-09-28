@@ -1,19 +1,25 @@
 [![Build Status on Travis](https://travis-ci.org/shazChaudhry/logging.svg?branch=master "CI build status on Travis")](https://travis-ci.org/shazChaudhry/logging)
 
-**User story**
-- As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.co/products) so that all application and system logs are collected centrally for searching, visualizing, analyzing and reporting purpose
+### User story
+As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.co/products) so that all application and system logs are collected centrally for searching, visualizing, analyzing and reporting purpose
 
-**Assumptions**
-* All containerized application services will start with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver in order to send logs to Elastic Stack
+### Assumptions
+All containerized application services will start with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver in order to send logs to Elastic Stack
 
-**Prerequisite**
+### Prerequisite
 * Infrastructre is setup in [Docker swarm mode](https://docs.docker.com/engine/swarm/)
 * On each cluster node, ensure maximum map count check _(required for Elasticsearch)_ is set: `sysctl -w vm.max_map_count=262144` command
 
-
-**Installation instructions**
+Installation instructions
 * Login to the master node in your Docker Swarm cluster
-* Clone this repository and change directory to where repo is cloned to
+* Clone this repo and change directory by following these commands
+```
+  alias git='docker run -it --rm --name git -v $PWD:/git -w /git indiehosters/git git'
+  git version
+  git clone https://github.com/shazChaudhry/elastic.git
+  sudo chown -R $USER elastic
+  cd elastic
+  ```
 * Deploy stack by running the following command:
   * `ELASTIC_VERSION=5.6.1 docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
