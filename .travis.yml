@@ -1,14 +1,8 @@
 sudo: required
 before_install:
-  # Install latest version docker CE
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
   - docker version
-  # Install latest version of docker-compose
-  #- sudo apt-get update -qq
-  #- sudo apt-get install -qq python-pip && pip install --upgrade pip
-  #- sudo pip install docker-compose
-  #- docker-compose version
 services:
   - docker
 
@@ -21,9 +15,9 @@ script:
   - docker node ls
   - chmod +x *.sh
   - ./deployStack.sh
-  - sleep 180 #wait for the stack to come up
+  - sleep 180
   - docker run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201 jenkinsci/jenkins
-  - sleep 120 #wait for the stack to come up
+  - sleep 120
 
 after_script:
   - docker stack services logging
