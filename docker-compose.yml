@@ -5,37 +5,37 @@ version: "3.3"
 
 services:
 
-    # A node that has node.master set to true (default), which makes it eligible to be elected as the master node, which controls the cluster.
-    elasticsearchMaster:
-        image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.6.2}
-        hostname: elasticsearchMaster
-        environment:
-            - cluster.name=elasticsearch-dev
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - node.name=elasticsearchMaster
-            - node.master=true
-            - discovery.zen.minimum_master_nodes=1
-        networks:
-            - elastic
-        volumes:
-            - elasticsearchMaster:/usr/share/elasticsearch/data
+    # # A node that has node.master set to true (default), which makes it eligible to be elected as the master node, which controls the cluster.
+    # elasticsearchMaster:
+    #     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.6.2}
+    #     hostname: elasticsearchMaster
+    #     environment:
+    #         - cluster.name=elasticsearch-dev
+    #         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    #         - node.name=elasticsearchMaster
+    #         - node.master=true
+    #         - discovery.zen.minimum_master_nodes=1
+    #     networks:
+    #         - elastic
+    #     volumes:
+    #         - elasticsearchMaster:/usr/share/elasticsearch/data
+    #
+    # # A node that has node.data set to true (default). Data nodes hold data and perform data related operations such as CRUD, search, and aggregations.
+    # elasticsearchData:
+    #     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.6.2}
+    #     hostname: elasticsearchData
+    #     environment:
+    #         - cluster.name=elasticsearch-dev
+    #         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    #         - node.name=elasticsearchData
+    #         - node.data=true
+    #         - "discovery.zen.ping.unicast.hosts=elasticsearchMaster"
+    #     networks:
+    #         - elastic
+    #     volumes:
+    #         - elasticsearchData:/usr/share/elasticsearch/data
 
-    # A node that has node.data set to true (default). Data nodes hold data and perform data related operations such as CRUD, search, and aggregations.
-    elasticsearchData:
-        image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.6.2}
-        hostname: elasticsearchData
-        environment:
-            - cluster.name=elasticsearch-dev
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - node.name=elasticsearchData
-            - node.data=true
-            - "discovery.zen.ping.unicast.hosts=elasticsearchMaster"
-        networks:
-            - elastic
-        volumes:
-            - elasticsearchData:/usr/share/elasticsearch/data
-
-    # A node that has node.ingest set to true (default). Ingest nodes are able to apply an ingest pipeline (https://www.elastic.co/guide/en/elasticsearch/reference/current/pipeline.html) to a document in order to transform and enrich the document before indexing. With a heavy ingest load, it makes sense to use dedicated ingest nodes and to mark the master and data nodes as node.ingest: false.
+    # # A node that has node.ingest set to true (default). Ingest nodes are able to apply an ingest pipeline (https://www.elastic.co/guide/en/elasticsearch/reference/current/pipeline.html) to a document in order to transform and enrich the document before indexing. With a heavy ingest load, it makes sense to use dedicated ingest nodes and to mark the master and data nodes as node.ingest: false.
     elasticsearchIngest:
         image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.6.2}
         hostname: elasticsearchIngest
@@ -45,8 +45,8 @@ services:
             - cluster.name=elasticsearch-dev
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - node.name=elasticsearchIngest
-            - node.ingest=true
-            - "discovery.zen.ping.unicast.hosts=elasticsearchMaster"
+            # - node.ingest=true
+            # - "discovery.zen.ping.unicast.hosts=elasticsearchMaster"
         networks:
             - elastic
         volumes:
