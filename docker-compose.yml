@@ -63,7 +63,10 @@ services:
         networks:
             - elastic
         volumes:
-            - ./elk/logstash/config/pipeline:/usr/share/logstash/pipeline
+            # - ./elk/logstash/config/pipeline:/usr/share/logstash/pipeline
+            - type: bind
+              source: ./elk/logstash/config/pipeline
+              target: /usr/share/logstash/pipeline
 
     kibana:
         image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-5.6.2}
