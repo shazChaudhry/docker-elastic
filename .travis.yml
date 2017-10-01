@@ -20,8 +20,8 @@ script:
   - sleep 120
 
 after_script:
-  - docker stack services logging
-  - docker stack ps logging
+  - docker stack services elastic
+  - docker stack ps elastic
   #List all Elasticsearch Indices. One entry sould be for logstash containing console logs for Jenkins
   - curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/indices?v&pretty'
   - ./removeStack.sh
