@@ -21,7 +21,7 @@ All containerized application services will start with [GELF](http://docs.graylo
   cd elastic
   ```
 * Deploy stack by running the following command:
-  * `ELASTIC_VERSION=5.6.2 docker stack deploy -c docker-compose.yml elastic`
+  * `ELASTIC_VERSION=5.6.3 docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
   *   `docker stack services elastic`
   *   `docker stack ps elastic`
