@@ -11,21 +11,21 @@ services:
             - "9200:9200"
         environment:
             - ELASTIC_PASSWORD=changeme
+            - "discovery.type=single-node"
         networks:
             - elastic
         volumes:
             - elasticsearch:/usr/share/elasticsearch/data
 
-    # logstash:
-    #     image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.0.0}
-    #     hostname: logstash
-    #     ports:
-    #       - "12201:12201/udp"
-    #     networks:
-    #         - elastic
-    #     configs: # https://docs.docker.com/compose/compose-file/#long-syntax
-    #         - source: pipeline
-    #           target: /usr/share/logstash/pipeline/logstash.conf
+    logstash:
+        image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.0.0}
+        ports:
+          - "12201:12201/udp"
+        networks:
+            - elastic
+        configs: # https://docs.docker.com/compose/compose-file/#long-syntax
+            - source: pipeline
+              target: /usr/share/logstash/pipeline/logstash.conf
 
     kibana:
         image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.0.0}
