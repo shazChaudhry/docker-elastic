@@ -1,67 +1,24 @@
-version: "3.3"
+version: "3.4"
 
 # 10 Things to Consider When Planning Your Elasticsearch Project: https://ecmarchitect.com/archives/2015/07/27/4031
 # Using Apache JMeter to Test Elasticsearch: https://ecmarchitect.com/archives/2014/09/02/3915
 
 services:
 
-    # # A node that has node.master set to true (default), which makes it eligible to be elected as the master node, which controls the cluster.
-    elasticsearchMaster:
-        image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.6.2}
-        hostname: elasticsearchMaster
-        environment:
-            - cluster.name=elasticsearch-dev
-            - node.name=elasticsearchMaster
-            - network.host=elasticsearchMaster
-            - node.master=true
-            - node.data=true
-            - node.ingest=false
-            - "discovery.zen.minimum_master_nodes=1"
-            - "discovery.zen.ping.unicast.hosts=elasticsearchMaster"
-        networks:
-            - elastic
-        # volumes:
-        #     - elasticsearchMaster:/usr/share/elasticsearch/data
-
-    # # A node that has node.data set to true (default). Data nodes hold data and perform data related operations such as CRUD, search, and aggregations.
-    elasticsearchData:
-        image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.6.2}
-        hostname: elasticsearchData
-        environment:
-            - cluster.name=elasticsearch-dev
-            - node.name=elasticsearchData
-            - network.host=elasticsearchData
-            - node.master=false
-            - node.data=true
-            - node.ingest=false
-            - "discovery.zen.ping.unicast.hosts=elasticsearchMaster"
-        networks:
-            - elastic
-        # volumes:
-        #     - elasticsearchData:/usr/share/elasticsearch/data
-
-    # # A node that has node.ingest set to true (default). Ingest nodes are able to apply an ingest pipeline (https://www.elastic.co/guide/en/elasticsearch/reference/current/pipeline.html) to a document in order to transform and enrich the document before indexing. With a heavy ingest load, it makes sense to use dedicated ingest nodes and to mark the master and data nodes as node.ingest: false.
     elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-5.6.2}
-        hostname: elasticsearchIngest
+        image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.0.0}
         ports:
             - "9200:9200"
         environment:
-            - cluster.name=elasticsearch-dev
-            - node.name=elasticsearchIngest
-            - network.host=elasticsearchIngest
-            - node.master=false
-            - node.data=false
-            - node.ingest=true
-            - "discovery.zen.ping.unicast.hosts=elasticsearchMaster"
+            - ELASTIC_PASSWORD=changeme
+            - "discovery.type=single-node"
         networks:
             - elastic
-        # volumes:
-        #     - elasticsearchIngest:/usr/share/elasticsearch/data
+        volumes:
+            - elasticsearch:/usr/share/elasticsearch/data
 
     logstash:
-        image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-5.6.2}
-        hostname: logstash
+        image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.0.0}
         ports:
           - "12201:12201/udp"
         networks:
@@ -71,22 +28,24 @@ services:
               target: /usr/share/logstash/pipeline/logstash.conf
 
     kibana:
-        image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-5.6.2}
-        hostname: kibana
+        image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.0.0}
         ports:
             - "5601:5601"
-        networks:
-            - elastic
         environment:
             - ELASTICSEARCH_URL=http://elasticsearch:9200
+            - ELASTICSEARCH_USERNAME=elastic
+            - ELASTICSEARCH_PASSWORD=changeme
+        networks:
+            - elastic
+        volumes:
+            - kibana:/usr/share/kibana/data
 
 networks:
     elastic:
 
 volumes:
-    elasticsearchMaster:
-    elasticsearchData:
-    elasticsearchIngest:
+    elasticsearch:
+    kibana:
 
 configs:
     pipeline:
