@@ -1,0 +1,31 @@
+version: "3.4"
+
+services:
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION:-6.0.0}
+    user: root # Need to override user so we can access the log files, and docker.sock
+    networks:
+      - elastic
+    configs:
+      - source: fb_config
+        target: /usr/share/filebeat/filebeat.yml
+    volumes:
+      - filebeat:/usr/share/filebeat/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      # This is needed for filebeat to load log path as specified in filebeat.yml
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+    command: ["--strict.perms=false"]
+    deploy:
+      mode: global
+
+networks:
+  elastic:
+    external: true
+
+volumes:
+  filebeat:
+
+configs:
+  fb_config:
+    file: $PWD/elk/beats/filebeat/config/filebeat.yml

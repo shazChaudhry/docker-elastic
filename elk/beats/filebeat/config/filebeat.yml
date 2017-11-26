@@ -1,0 +1,28 @@
+filebeat.prospectors:
+- type: log
+  enabled: true
+  paths:
+    - '/var/lib/docker/containers/*/*.log'
+  json.message_key: log
+  json.add_error_key: true
+  json.keys_under_root: true
+  processors:
+    - add_docker_metadata: ~
+    - add_cloud_metadata: ~
+    - add_locale: ~
+  multiline.pattern: '^[[:space:]]+|^Caused by:'
+  multiline.negate: false
+  multiline.match: after
+
+#-------------------------- Elasticsearch output ------------------------------
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: elastic
+  password: changeme
+
+#============================== Dashboards =====================================
+setup.dashboards.enabled: true
+setup.kibana:
+  host: "kibana:5601"
+  username: elastic
+  password: changeme

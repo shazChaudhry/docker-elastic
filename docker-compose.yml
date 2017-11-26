@@ -3,50 +3,53 @@ version: "3.4"
 # 10 Things to Consider When Planning Your Elasticsearch Project: https://ecmarchitect.com/archives/2015/07/27/4031
 # Using Apache JMeter to Test Elasticsearch: https://ecmarchitect.com/archives/2014/09/02/3915
 
+
+# an example on entire ELK stack in docker-compose v3:- https://github.com/elastic/stack-docker
 services:
 
-    elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.0.0}
-        ports:
-            - "9200:9200"
-        environment:
-            - ELASTIC_PASSWORD=changeme
-            - "discovery.type=single-node"
-        networks:
-            - elastic
-        volumes:
-            - elasticsearch:/usr/share/elasticsearch/data
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.0.0}
+    ports:
+      - "9200:9200"
+    environment:
+      - ELASTIC_PASSWORD=changeme
+      - "discovery.type=single-node"
+    networks:
+      - elastic
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
 
-    logstash:
-        image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.0.0}
-        ports:
-          - "12201:12201/udp"
-        networks:
-            - elastic
-        configs: # https://docs.docker.com/compose/compose-file/#long-syntax
-            - source: pipeline
-              target: /usr/share/logstash/pipeline/logstash.conf
+  logstash:
+    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.0.0}
+    ports:
+      - "12201:12201/udp"
+    networks:
+      - elastic
+    configs: # https://docs.docker.com/compose/compose-file/#long-syntax
+      - source: ls_config
+        target: /usr/share/logstash/pipeline/logstash.conf
 
-    kibana:
-        image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.0.0}
-        ports:
-            - "5601:5601"
-        environment:
-            - ELASTICSEARCH_URL=http://elasticsearch:9200
-            - ELASTICSEARCH_USERNAME=elastic
-            - ELASTICSEARCH_PASSWORD=changeme
-        networks:
-            - elastic
-        volumes:
-            - kibana:/usr/share/kibana/data
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.0.0}
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    networks:
+      - elastic
+    volumes:
+      - kibana:/usr/share/kibana/data
 
 networks:
-    elastic:
+  elastic:
+    external: true
 
 volumes:
-    elasticsearch:
-    kibana:
+  elasticsearch:
+  kibana:
 
 configs:
-    pipeline:
-      file: $PWD/elk/logstash/config/pipeline/logstash.conf
+  ls_config:
+    file: $PWD/elk/logstash/config/pipeline/logstash.conf

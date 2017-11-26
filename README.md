@@ -32,7 +32,6 @@ All containerized application services will start with [GELF](http://docs.graylo
 ### Prerequisite
 * Infrastructre is setup in [Docker swarm mode](https://docs.docker.com/engine/swarm/)
 * On each cluster node, ensure maximum map count check _(required for Elasticsearch)_ is set: `sudo sysctl -w vm.max_map_count=262144`
-* **_NOTE:_** If in case you would like to use the vagrantfile provided in this repository, disable the file provisioners you do not wish to use.
 
 ### Installation instructions
 * Login to the master node in your Docker Swarm cluster
@@ -44,11 +43,16 @@ All containerized application services will start with [GELF](http://docs.graylo
   sudo chown -R $USER elastic
   cd elastic
   ```
-* Deploy stack by running the following command:
+* Deploy stack by running the following commands:
+  * `docker network create --driver overlay elastic`
   * `ELASTIC_VERSION=6.0.0 docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
   *   `docker stack services elastic`
-  *   `docker stack ps elastic`
+  *   `docker stack ps elastic` address any error reported at this point
+* Once all services are running, execute the following commands: nodes
+  *   `ELASTIC_VERSION=6.0.0 docker stack deploy -c filebeat-docker-compose.yml filebeat`
+  *   Running the following command should produce elasticsearch index and one of the rows should have _filebeat-*_
+      *   `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
 
 ### Testing
 * Wait until all stack services are up and running
