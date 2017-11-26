@@ -4,7 +4,8 @@ services:
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION:-6.0.0}
-    user: root # Need to override user so we can access the log files, and docker.sock
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
     networks:
       - elastic
     configs:
@@ -15,6 +16,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # This is needed for filebeat to load log path as specified in filebeat.yml
       - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+      # This is needed for filebeat to load logs for system and auth modules
+      - /var/log/:/var/log/:ro
+      # This is needed for filebeat to load logs for auditd module
+      - /var/log/audit/:/var/log/audit/:ro
+    # disable strict permission checks  
     command: ["--strict.perms=false"]
     deploy:
       mode: global

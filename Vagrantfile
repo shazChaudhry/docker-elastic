@@ -5,8 +5,8 @@ $docker_swarm_init = <<SCRIPT
 echo "============== Initializing swarm mode ====================="
 docker swarm init --advertise-addr 192.168.99.101 --listen-addr 192.168.99.101:2377
 sysctl -w vm.max_map_count=262144
-# chmod o+rw /var/run/docker.sock
-# chmod -R a=rwx /var/lib/docker/containers
+# Configure and audit Linux systems with Audit daemon. Required for Filebeat Auditd module
+apt install -y auditd audispd-plugins
 SCRIPT
 
 Vagrant.configure("2") do |config|
