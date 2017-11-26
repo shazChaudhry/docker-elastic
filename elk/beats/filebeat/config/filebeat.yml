@@ -13,6 +13,33 @@ filebeat.prospectors:
   multiline.pattern: '^[[:space:]]+|^Caused by:'
   multiline.negate: false
   multiline.match: after
+- type: log
+  enabled: true
+  paths:
+    - /var/*/jobs/*/builds/*/log
+    - /var/*/jobs/*/jobs/*/branches/*/builds/*/log
+  json.message_key: log
+  json.add_error_key: true
+  json.keys_under_root: true
+  multiline.pattern: '^[[:space:]]+|^Caused by:'
+  multiline.negate: false
+  multiline.match: after
+
+#==========================  Modules configuration ============================
+filebeat.modules:
+
+#------------------------------- System Module -------------------------------
+- module: system
+  # Syslog
+  syslog:
+    enabled: true
+  auth:
+    enabled: true
+
+#------------------------------- Auditd Module -------------------------------
+- module: auditd
+  log:
+    enabled: true
 
 #-------------------------- Elasticsearch output ------------------------------
 output.elasticsearch:
