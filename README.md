@@ -65,7 +65,7 @@ All containerized application services will start with [GELF](http://docs.graylo
     * Note that _`--log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201`_ sends container console logs to Elastic stack
 * Login at `http://<master_node_ip>:5601` _(Kibana)_  which should show Management tab
   * username = `elastic`
-  * password = `MagicWord`
+  * password = `changeme`
 * On the Kibana Management tab, configure an index pattern
   * Index name or pattern = `logstash-*`
   * Time-field name = `@timestamp`
