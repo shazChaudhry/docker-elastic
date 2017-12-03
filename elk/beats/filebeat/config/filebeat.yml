@@ -13,17 +13,17 @@ filebeat.prospectors:
   multiline.pattern: '^[[:space:]]+|^Caused by:'
   multiline.negate: false
   multiline.match: after
-- type: log
-  enabled: true
-  paths:
-    - /var/*/jobs/*/builds/*/log
-    - /var/*/jobs/*/jobs/*/branches/*/builds/*/log
-  json.message_key: log
-  json.add_error_key: true
-  json.keys_under_root: true
-  multiline.pattern: '^[[:space:]]+|^Caused by:'
-  multiline.negate: false
-  multiline.match: after
+# - type: log
+#   enabled: true
+#   paths:
+#     # path to jenkins build logs
+#     - /var/lib/docker/volumes/jenkins_home/_data/jobs/*/builds/*/log
+#   json.message_key: log
+#   json.add_error_key: true
+#   json.keys_under_root: true
+#   multiline.pattern: '^[[:space:]]+|^Caused by:'
+#   multiline.negate: false
+#   multiline.match: after
 
 #==========================  Modules configuration ============================
 filebeat.modules:

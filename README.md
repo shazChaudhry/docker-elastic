@@ -44,16 +44,17 @@ All containerized application services will start with [GELF](http://docs.graylo
   cd elastic
   ```
 * Deploy stack by running the following commands:
+  * `export ELASTIC_VERSION=6.0.0`
   * `docker network create --driver overlay elastic`
-  * `ELASTIC_VERSION=6.0.0 docker stack deploy -c docker-compose.yml elastic`
+  * `docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
   *   `docker stack services elastic`
   *   `docker stack ps elastic` address any error reported at this point
 * Once all services are running, execute the following commands:
-  *   `ELASTIC_VERSION=6.0.0 docker stack deploy -c filebeat-docker-compose.yml filebeat`
+  *   `docker stack deploy -c filebeat-docker-compose.yml filebeat`
   *   Running the following command should produce elasticsearch index and one of the rows should have _filebeat-*_
       *   `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
-  *   `ELASTIC_VERSION=6.0.0 docker stack deploy -c metricbeat-docker-compose.yml metricbeat`
+  *   `docker stack deploy -c metricbeat-docker-compose.yml metricbeat`
   *   Running the following command should produce elasticsearch index and one of the rows should have _metricbeat-*_
       *   `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
 
@@ -61,7 +62,7 @@ All containerized application services will start with [GELF](http://docs.graylo
 ### Testing
 * Wait until all stack services are up and running
 * Run jenkins container on one of the Docker Swarm node as follows:
-  * `docker container run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201  jenkinsci/blueocean`
+  * `docker container run -d --rm --name jenkins -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201  jenkinsci/blueocean`
     * Note that _`--log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201`_ sends container console logs to Elastic stack
 * Login at `http://<master_node_ip>:5601` _(Kibana)_  which should show Management tab
   * username = `elastic`
@@ -70,10 +71,6 @@ All containerized application services will start with [GELF](http://docs.graylo
   * Index name or pattern = `logstash-*`
   * Time-field name = `@timestamp`
 * Click on Kibana Discover tab to view jenkins console logs
-* On the Kibana Management tab, configure an index pattern
-  * Index name or pattern = `logstash-*`
-  * Time-field name = `@timestamp`
-* Click on Kibana Discover tab to view container system/container metric send by metricbeat
 
 ### References
 - [Installing Elastic Stack](https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html)
