@@ -1,0 +1,34 @@
+metricbeat.modules:
+
+#------------------------------- System Module -------------------------------
+- module: system
+  metricsets: ["cpu", "load", "filesystem", "fsstat", "memory", "network", "process", "core", "diskio", "socket"]
+  period: 10s
+  enabled: true
+  processes: ['.*']
+
+  cpu.metrics:  ["percentages"]
+  core.metrics: ["percentages"]
+
+#------------------------------- Docker Module -------------------------------
+- module: docker
+  metricsets: ["container", "cpu", "diskio", "healthcheck", "info", "memory", "network"]
+  hosts: ["unix:///var/run/docker.sock"]
+  enabled: true
+  period: 10s
+
+#-------------------------- Elasticsearch output ------------------------------
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: elastic
+  password: changeme
+
+#============================== Dashboards =====================================
+# These settings control loading the sample dashboards to the Kibana index. Loading
+# the dashboards is disabled by default and can be enabled either by setting the
+# options here, or by using the `-setup` CLI flag.
+setup.dashboards.enabled: true
+setup.kibana:
+  host: "kibana:5601"
+  username: elastic
+  password: changeme

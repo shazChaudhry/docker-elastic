@@ -49,15 +49,19 @@ All containerized application services will start with [GELF](http://docs.graylo
 * Check status of the stack services by running the following commands:
   *   `docker stack services elastic`
   *   `docker stack ps elastic` address any error reported at this point
-* Once all services are running, execute the following commands: nodes
+* Once all services are running, execute the following commands:
   *   `ELASTIC_VERSION=6.0.0 docker stack deploy -c filebeat-docker-compose.yml filebeat`
   *   Running the following command should produce elasticsearch index and one of the rows should have _filebeat-*_
       *   `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
+  *   `ELASTIC_VERSION=6.0.0 docker stack deploy -c metricbeat-docker-compose.yml metricbeat`
+  *   Running the following command should produce elasticsearch index and one of the rows should have _metricbeat-*_
+      *   `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
+
 
 ### Testing
 * Wait until all stack services are up and running
 * Run jenkins container on one of the Docker Swarm node as follows:
-  * `docker run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201  jenkinsci/jenkins`
+  * `docker container run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201  jenkinsci/blueocean`
     * Note that _`--log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201`_ sends container console logs to Elastic stack
 * Login at `http://<master_node_ip>:5601` _(Kibana)_  which should show Management tab
   * username = `elastic`

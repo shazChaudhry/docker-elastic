@@ -3,7 +3,6 @@ version: "3.4"
 # 10 Things to Consider When Planning Your Elasticsearch Project: https://ecmarchitect.com/archives/2015/07/27/4031
 # Using Apache JMeter to Test Elasticsearch: https://ecmarchitect.com/archives/2014/09/02/3915
 
-
 # an example on entire ELK stack in docker-compose v3:- https://github.com/elastic/stack-docker
 services:
 

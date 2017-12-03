@@ -1,0 +1,33 @@
+version: "3.4"
+
+services:
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION:-6.0.0}
+    user: root
+    networks:
+      - elastic
+    configs:
+      - source: mb_config
+        target: /usr/share/metricbeat/metricbeat.yml
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - metricbeat:/usr/share/metricbeat/data
+    # disable strict permission checks
+    command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
+    deploy:
+      mode: global
+
+networks:
+  elastic:
+    external: true
+
+volumes:
+  metricbeat:
+
+configs:
+  mb_config:
+    file: $PWD/elk/beats/metricbeat/config/metricbeat.yml
