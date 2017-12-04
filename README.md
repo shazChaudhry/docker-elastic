@@ -39,9 +39,9 @@ All containerized application services will start with [GELF](http://docs.graylo
 ```
   alias git='docker run -it --rm --name git -v $PWD:/git -w /git indiehosters/git git'
   git version
-  git clone https://github.com/shazChaudhry/elastic.git
-  sudo chown -R $USER elastic
-  cd elastic
+  git clone https://github.com/shazChaudhry/docker-elastic.git
+  sudo chown -R $USER docker-elastic
+  cd docker-elastic
   ```
 * Deploy stack by running the following commands:
   * `export ELASTIC_VERSION=6.0.0`
