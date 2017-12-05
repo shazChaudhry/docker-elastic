@@ -26,8 +26,6 @@ services:
       - /var/log/audit/:/var/log/audit/:ro
     # disable strict permission checks
     command: ["--strict.perms=false"]
-    pid: "host"
-    privileged: true
     deploy:
       mode: global
 
