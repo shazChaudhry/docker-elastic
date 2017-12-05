@@ -49,7 +49,7 @@ All containerized application services will start with [GELF](http://docs.graylo
   * `docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
   *   `docker stack services elastic`
-  *   `docker stack ps elastic` address any error reported at this point
+  *   `docker stack ps --no-trunc elastic` address any error reported at this point
 * Once all services are running, execute the following commands:
   *   `docker stack deploy -c filebeat-docker-compose.yml filebeat`
   *   Running the following command should produce elasticsearch index and one of the rows should have _filebeat-*_

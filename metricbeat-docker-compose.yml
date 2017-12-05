@@ -18,6 +18,8 @@ services:
       - metricbeat:/usr/share/metricbeat/data
     # disable strict permission checks
     command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
+    pid: "host"
+    privileged: true
     deploy:
       mode: global
 

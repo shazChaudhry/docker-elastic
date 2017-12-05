@@ -16,7 +16,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # This is needed for filebeat to load container log path as specified in filebeat.yml
       - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
-      
+
       # # This is needed for filebeat to load jenkins build log path as specified in filebeat.yml
       # - /var/lib/docker/volumes/jenkins_home/_data/jobs/:/var/lib/docker/volumes/jenkins_home/_data/jobs/:ro
 
@@ -26,6 +26,8 @@ services:
       - /var/log/audit/:/var/log/audit/:ro
     # disable strict permission checks
     command: ["--strict.perms=false"]
+    pid: "host"
+    privileged: true
     deploy:
       mode: global
 
