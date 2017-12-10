@@ -14,6 +14,7 @@ services:
     environment:
       - discovery.zen.minimum_master_nodes=1
       - ELASTIC_PASSWORD=changeme
+      - node.name=elasticsearch
     networks:
       - elastic
     volumes:
@@ -25,6 +26,7 @@ services:
     environment:
       - "discovery.zen.ping.unicast.hosts=elasticsearch"
       - ELASTIC_PASSWORD=changeme
+      - node.name=elasticsearch2
     networks:
       - elastic
     volumes:
