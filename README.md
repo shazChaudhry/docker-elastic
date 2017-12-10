@@ -44,12 +44,13 @@ All containerized application services will start with [GELF](http://docs.graylo
   cd docker-elastic
   ```
 * Deploy stack by running the following commands:
-  * `export ELASTIC_VERSION=6.0.0`
+  * `export ELASTIC_VERSION=6.0.1` _(in the absense of this variable, v6.0.0 will be installed)_
   * `docker network create --driver overlay elastic`
   * `docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
   *   `docker stack services elastic`
-  *   `docker stack ps --no-trunc elastic` address any error reported at this point
+  *   `docker stack ps --no-trunc elastic` _(address any error reported at this point)_
+  *   `curl -u elastic:changeme http://localhost:9200/_cat/health` _(Inspect status of cluster)_
 * Once all services are running, execute the following commands:
   *   `docker stack deploy -c filebeat-docker-compose.yml filebeat`
   *   Running the following command should produce elasticsearch index and one of the rows should have _filebeat-*_

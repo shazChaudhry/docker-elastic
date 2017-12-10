@@ -8,18 +8,31 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.0.0}
+    hostname: elasticsearch
     ports:
       - "9200:9200"
     environment:
+      - discovery.zen.minimum_master_nodes=1
       - ELASTIC_PASSWORD=changeme
-      - "discovery.type=single-node"
     networks:
       - elastic
     volumes:
       - elasticsearch:/usr/share/elasticsearch/data
 
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.0.0}
+    hostname: elasticsearch2
+    environment:
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+      - ELASTIC_PASSWORD=changeme
+    networks:
+      - elastic
+    volumes:
+      - elasticsearch2:/usr/share/elasticsearch/data
+
   logstash:
     image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.0.0}
+    hostname: logstash
     ports:
       - "12201:12201/udp"
     networks:
@@ -30,6 +43,7 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.0.0}
+    hostname: kibana
     ports:
       - "5601:5601"
     environment:
@@ -47,6 +61,7 @@ networks:
 
 volumes:
   elasticsearch:
+  elasticsearch2:
   kibana:
 
 configs:
