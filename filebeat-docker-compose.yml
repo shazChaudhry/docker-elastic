@@ -21,9 +21,9 @@ services:
       # - /var/lib/docker/volumes/jenkins_home/_data/jobs/:/var/lib/docker/volumes/jenkins_home/_data/jobs/:ro
 
       # This is needed for filebeat to load logs for system and auth modules
-      - /var/log/:/var/log/:ro
+      # - /var/log/:/var/log/:ro
       # This is needed for filebeat to load logs for auditd module
-      - /var/log/audit/:/var/log/audit/:ro
+      # - /var/log/audit/:/var/log/audit/:ro
     # disable strict permission checks
     command: ["--strict.perms=false"]
     deploy:

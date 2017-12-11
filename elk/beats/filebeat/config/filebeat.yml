@@ -7,11 +7,11 @@ filebeat.prospectors:
   json.add_error_key: true
   json.keys_under_root: true
   processors:
-    - add_docker_metadata: ~
+    - add_docker_metadata:
+        host: "unix:///var/run/docker.sock"
     - add_cloud_metadata: ~
     - add_locale: ~
-  multiline.pattern: '^[[:space:]]+|^Caused by:'
-  multiline.negate: false
+  multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
   multiline.match: after
 # - type: log
 #   enabled: true
@@ -32,14 +32,14 @@ filebeat.modules:
 - module: system
   # Syslog
   syslog:
-    enabled: true
+    enabled: false
   auth:
-    enabled: true
+    enabled: false
 
 #------------------------------- Auditd Module -------------------------------
 - module: auditd
   log:
-    enabled: true
+    enabled: false
 
 #-------------------------- Elasticsearch output ------------------------------
 output.elasticsearch:
