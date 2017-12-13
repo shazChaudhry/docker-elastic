@@ -32,9 +32,9 @@ filebeat.modules:
 - module: system
   # Syslog
   syslog:
-    enabled: false
+    enabled: true
   auth:
-    enabled: false
+    enabled: true
 
 #------------------------------- Auditd Module -------------------------------
 - module: auditd

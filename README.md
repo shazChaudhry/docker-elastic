@@ -44,7 +44,7 @@ All containerized application services will start with [GELF](http://docs.graylo
   cd docker-elastic
   ```
 * Deploy stack by running the following commands:
-  * `export ELASTIC_VERSION=6.0.1` _(in the absense of this variable, v6.0.0 will be installed)_
+  * `export ELASTIC_VERSION=6.1.0` _(in the absense of this variable, v6.0.0 will be installed)_
   * `docker network create --driver overlay elastic`
   * `docker stack deploy -c docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
