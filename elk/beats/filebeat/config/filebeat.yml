@@ -39,6 +39,7 @@ filebeat.modules:
     var.paths: ["/var/log/auth.log*"]
 
 #------------------------------- Auditd Module -------------------------------
+# Does not look like Auditd is supported in Alpine linux: https://github.com/linuxkit/linuxkit/issues/52
 - module: auditd
   log:
     enabled: false
