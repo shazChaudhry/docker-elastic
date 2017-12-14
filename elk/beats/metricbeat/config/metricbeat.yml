@@ -19,46 +19,46 @@ metricbeat.modules:
 
 #-------------------------------- Autodiscovery -------------------------------
 # https://www.elastic.co/blog/brewing-in-beats-autodiscovery-with-docker
-metricbeat.autodiscover:
-  providers:
-    - type: docker
-      templates:
-        - condition:
-            equals.docker.container.image: redis
-          config:
-            - module: redis
-              metricsets: ["info", "keyspace"]
-              hosts: "${data.host}:${data.port}"
-        - condition:
-            equals.docker.container.image: haproxy
-          config:
-            - module: haproxy
-              metricsets: ["info", "stat"]
-              hosts: "${data.host}:${data.port}"
-        - condition:
-            equals.docker.container.image: kafka
-          config:
-            - module: kafka
-              metricsets: ["partition"]
-              hosts: "${data.host}:${data.port}"
-        - condition:
-            equals.docker.container.image: prometheus
-          config:
-            - module: prometheus
-              metricsets: ["stats"]
-              period: 10s
-              hosts: "${data.host}:${data.port}"
-              metrics_path: /metrics
-        - condition:
-            equals.docker.container.image: rabbitmq
-          config:
-            - module: rabbitmq
-              metricsets: ["node"]
-              period: 10s
-              hosts: "${data.host}:${data.port}"
-              metrics_path: /metrics
-              username: guest
-              password: guest
+# metricbeat.autodiscover:
+#   providers:
+#     - type: docker
+#       templates:
+#         - condition:
+#             equals.docker.container.image: redis
+#           config:
+#             - module: redis
+#               metricsets: ["info", "keyspace"]
+#               hosts: "${data.host}:${data.port}"
+#         - condition:
+#             equals.docker.container.image: haproxy
+#           config:
+#             - module: haproxy
+#               metricsets: ["info", "stat"]
+#               hosts: "${data.host}:${data.port}"
+#         - condition:
+#             equals.docker.container.image: kafka
+#           config:
+#             - module: kafka
+#               metricsets: ["partition"]
+#               hosts: "${data.host}:${data.port}"
+#         - condition:
+#             equals.docker.container.image: prometheus
+#           config:
+#             - module: prometheus
+#               metricsets: ["stats"]
+#               period: 10s
+#               hosts: "${data.host}:${data.port}"
+#               metrics_path: /metrics
+#         - condition:
+#             equals.docker.container.image: rabbitmq
+#           config:
+#             - module: rabbitmq
+#               metricsets: ["node"]
+#               period: 10s
+#               hosts: "${data.host}:${data.port}"
+#               metrics_path: /metrics
+#               username: guest
+#               password: guest
 
 #-------------------------- Elasticsearch output ------------------------------
 output.elasticsearch:
