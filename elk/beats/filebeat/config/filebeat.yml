@@ -33,8 +33,10 @@ filebeat.modules:
   # Syslog
   syslog:
     enabled: true
+    var.paths: ["/var/log/syslog*"]
   auth:
     enabled: true
+    var.paths: ["/var/log/auth.log*"]
 
 #------------------------------- Auditd Module -------------------------------
 - module: auditd
