@@ -16,7 +16,7 @@ script:
   - chmod +x *.sh
   - ./deployStack.sh
   - sleep 180
-  - docker run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201 jenkinsci/jenkins
+  - docker run -d --rm --name jenkins -p 8080:8080 jenkinsci/blueocean
   - sleep 120
 
 after_script:

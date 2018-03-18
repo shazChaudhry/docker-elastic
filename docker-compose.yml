@@ -1,69 +1,100 @@
-version: "3.4"
+version: "3.5"
 
 # 10 Things to Consider When Planning Your Elasticsearch Project: https://ecmarchitect.com/archives/2015/07/27/4031
 # Using Apache JMeter to Test Elasticsearch: https://ecmarchitect.com/archives/2014/09/02/3915
 
-# an example on entire ELK stack in docker-compose v3:- https://github.com/elastic/stack-docker
 services:
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.0.0}
-    hostname: elasticsearch
-    ports:
-      - "9200:9200"
+  swarm-listener:
+    image: vfarcic/docker-flow-swarm-listener
+    networks:
+      - elastic
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
+      - DF_NOTIFY_CREATE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/reconfigure
+      - DF_NOTIFY_REMOVE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/remove
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  proxy:
+    image: vfarcic/docker-flow-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "9200:9200"
+      - "5601:5601"
+    networks:
+      - elastic
+    environment:
+      - LISTENER_ADDRESS=swarm-listener
+      - MODE=swarm
+      - BIND_PORTS=9200,5601
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.2.2}
+    environment:
+      - discovery.zen.ping.unicast.hosts=elasticsearch
       - discovery.zen.minimum_master_nodes=1
       - ELASTIC_PASSWORD=changeme
-      - node.name=elasticsearch
+      - cluster.name=DevOps
+      - network.host=0.0.0.0
     networks:
       - elastic
     volumes:
       - elasticsearch:/usr/share/elasticsearch/data
-
-  elasticsearch2:
-    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.0.0}
-    hostname: elasticsearch2
-    environment:
-      - "discovery.zen.ping.unicast.hosts=elasticsearch"
-      - ELASTIC_PASSWORD=changeme
-      - node.name=elasticsearch2
-    networks:
-      - elastic
-    volumes:
-      - elasticsearch2:/usr/share/elasticsearch/data
+    deploy:
+      mode: 'global'
+      endpoint_mode: dnsrr
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.servicePath=/
+        - com.df.port=9200
+        - com.df.srcPort=9200
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.0.0}
+    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.2.2}
     hostname: logstash
+    environment:
+      - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
+      - XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
+      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD=changeme
     ports:
       - "12201:12201/udp"
     networks:
       - elastic
-    configs: # https://docs.docker.com/compose/compose-file/#long-syntax
+    configs:
       - source: ls_config
         target: /usr/share/logstash/pipeline/logstash.conf
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.0.0}
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.2.2}
     hostname: kibana
-    ports:
-      - "5601:5601"
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=changeme
+      - SERVER_NAME=kibana
     networks:
       - elastic
     volumes:
       - kibana:/usr/share/kibana/data
+    deploy:
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.servicePath=/
+        - com.df.port=5601
+        - com.df.srcPort=5601
 
 networks:
-  elastic:
-    external: true
+    elastic:
+      external: true
 
 volumes:
   elasticsearch:
-  elasticsearch2:
   kibana:
 
 configs:
