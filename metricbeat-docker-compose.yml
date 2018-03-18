@@ -1,9 +1,9 @@
-version: "3.4"
+version: "3.5"
 
 services:
 
   metricbeat:
-    image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION:-6.0.0}
+    image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION:-6.2.2}
     user: root
     networks:
       - elastic

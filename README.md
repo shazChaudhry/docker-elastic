@@ -43,22 +43,21 @@ All containerized application services will start with [GELF](http://docs.graylo
   sudo chown -R $USER docker-elastic
   cd docker-elastic
   ```
-* Deploy stack by running the following commands:
-  * `export ELASTIC_VERSION=6.1.0` _(in the absense of this variable, v6.0.0 will be installed)_
+* Deploy Elasticsearch by running the following commands:
+  * `export ELASTIC_VERSION=6.2.2`
   * `docker network create --driver overlay elastic`
-  * `docker stack deploy -c docker-compose.yml elastic`
+  * `docker stack deploy --compose-file docker-compose.yml elastic`
 * Check status of the stack services by running the following commands:
-  *   `docker stack services elastic`
-  *   `docker stack ps --no-trunc elastic` _(address any error reported at this point)_
-  *   `curl -u elastic:changeme http://localhost:9200/_cat/health` _(Inspect status of cluster)_
+  * `docker stack services elastic`
+  * `docker stack ps --no-trunc elastic` _(address any error reported at this point)_
+  * `curl -XGET -u elastic:changeme 'localhost:9200/_cat/health?v&pretty'` _(Inspect status of cluster)_
 * Once all services are running, execute the following commands:
-  *   `docker stack deploy -c filebeat-docker-compose.yml filebeat`
-  *   Running the following command should produce elasticsearch index and one of the rows should have _filebeat-*_
-      *   `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
-  *   `docker stack deploy -c metricbeat-docker-compose.yml metricbeat`
-  *   Running the following command should produce elasticsearch index and one of the rows should have _metricbeat-*_
-      *   `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
-
+  * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`
+  * Running the following command should produce elasticsearch index and one of the rows should have _filebeat-*_
+    * `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
+  * `docker stack deploy --compose-file metricbeat-docker-compose.yml metricbeat`
+  * Running the following command should produce elasticsearch index and one of the rows should have _metricbeat-*_
+    * `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
 
 ### Testing
 * Wait until all stack services are up and running
