@@ -1,5 +1,44 @@
-metricbeat.modules:
+#-------------------------------- Autodiscovery -------------------------------
+metricbeat.autodiscover:
+  providers:
+    - type: docker
+      templates:
+        - condition:
+            equals.docker.container.image: redis
+          config:
+            - module: redis
+              metricsets: ["info", "keyspace"]
+              hosts: "${data.host}:${data.port}"
+        - condition:
+            equals.docker.container.image: vfarcic/docker-flow-proxy
+          config:
+            - module: haproxy
+              metricsets: ["info", "stat"]
+              period: 10s
+              hosts: "${data.host}:${data.port}"
+        - condition:
+            equals.docker.container.image: docker.elastic.co/elasticsearch/elasticsearch-platinum
+          config:
+            - module: elasticsearch
+              metricsets: ["node", "node_stats"]
+              period: 10s
+              hosts: "${data.host}:${data.port}"
+        - condition:
+            equals.docker.container.image: docker.elastic.co/kibana/kibana
+          config:
+            - module: kibana
+              metricsets: ["status"]
+              period: 10s
+              hosts: "${data.host}:${data.port}"
+        - condition:
+            equals.docker.container.image: docker.elastic.co/logstash/logstash
+          config:
+            - module: logstash
+              metricsets: ["node", "node_stats"]
+              period: 10s
+              hosts: "${data.host}:${data.port}"
 
+metricbeat.modules:
 #------------------------------- System Module -------------------------------
 - module: system
   metricsets: ["cpu", "load", "memory", "network", "process", "process_summary", "core", "diskio", "socket"]
@@ -29,51 +68,7 @@ metricbeat.modules:
 - module: docker
   metricsets: ["container", "cpu", "diskio", "healthcheck", "info", "memory", "network"]
   hosts: ["unix:///var/run/docker.sock"]
-  enabled: true
   period: 10s
-
-#-------------------------------- Autodiscovery -------------------------------
-# https://www.elastic.co/blog/brewing-in-beats-autodiscovery-with-docker
-# metricbeat.autodiscover:
-#   providers:
-#     - type: docker
-#       templates:
-#         - condition:
-#             equals.docker.container.image: redis
-#           config:
-#             - module: redis
-#               metricsets: ["info", "keyspace"]
-#               hosts: "${data.host}:${data.port}"
-#         - condition:
-#             equals.docker.container.image: haproxy
-#           config:
-#             - module: haproxy
-#               metricsets: ["info", "stat"]
-#               hosts: "${data.host}:${data.port}"
-#         - condition:
-#             equals.docker.container.image: kafka
-#           config:
-#             - module: kafka
-#               metricsets: ["partition"]
-#               hosts: "${data.host}:${data.port}"
-#         - condition:
-#             equals.docker.container.image: prometheus
-#           config:
-#             - module: prometheus
-#               metricsets: ["stats"]
-#               period: 10s
-#               hosts: "${data.host}:${data.port}"
-#               metrics_path: /metrics
-#         - condition:
-#             equals.docker.container.image: rabbitmq
-#           config:
-#             - module: rabbitmq
-#               metricsets: ["node"]
-#               period: 10s
-#               hosts: "${data.host}:${data.port}"
-#               metrics_path: /metrics
-#               username: guest
-#               password: guest
 
 #-------------------------- Elasticsearch output ------------------------------
 output.elasticsearch:
@@ -82,9 +77,8 @@ output.elasticsearch:
   password: changeme
 
 #============================== Dashboards =====================================
-# These settings control loading the sample dashboards to the Kibana index. Loading
-# the dashboards is disabled by default and can be enabled either by setting the
-# options here, or by using the `-setup` CLI flag.
+# These settings control loading the sample dashboards to the Kibana index.
+# Loading the dashboards is disabled by default and can be enabled either by setting the options here, or by using the `-setup` CLI flag.
 setup.dashboards.enabled: true
 setup.kibana:
   host: "kibana:5601"
