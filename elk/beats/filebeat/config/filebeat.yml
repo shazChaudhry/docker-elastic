@@ -1,3 +1,24 @@
+#==========================  Modules configuration =============================
+filebeat.modules:
+
+#------------------------------- System Module -------------------------------
+- module: system
+  # Syslog
+  syslog:
+    enabled: true
+    var.paths: ["/var/log/syslog*"]
+  auth:
+    enabled: true
+    var.paths: ["/var/log/auth.log*"]
+
+#------------------------------- Auditd Module -------------------------------
+# Does not look like Auditd is supported in Alpine linux:
+# https://github.com/linuxkit/linuxkit/issues/52
+- module: auditd
+  log:
+    enabled: false
+
+#=========================== Filebeat prospectors ==============================
 filebeat.prospectors:
 - type: log
   enabled: true
@@ -25,26 +46,7 @@ filebeat.prospectors:
 #   multiline.negate: false
 #   multiline.match: after
 
-#==========================  Modules configuration ============================
-filebeat.modules:
-
-#------------------------------- System Module -------------------------------
-- module: system
-  # Syslog
-  syslog:
-    enabled: true
-    var.paths: ["/var/log/syslog*"]
-  auth:
-    enabled: true
-    var.paths: ["/var/log/auth.log*"]
-
-#------------------------------- Auditd Module -------------------------------
-# Does not look like Auditd is supported in Alpine linux: https://github.com/linuxkit/linuxkit/issues/52
-- module: auditd
-  log:
-    enabled: false
-
-#-------------------------- Elasticsearch output ------------------------------
+#========================== Elasticsearch output ===============================
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
   username: elastic
