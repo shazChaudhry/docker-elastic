@@ -12,7 +12,7 @@ As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.c
   <img src="./pics/elastic-stack.png" alt="Beats platform" style="width: 250px;"/>
   <img src="./pics/elastic-products.PNG" alt="Elastic products" style="width: 250px;"/>
   <br>
-  <a href="https://www.elastic.co/guide/en/logstash/current/deploying-and-scaling.html">Deploying and Scaling Logstashedit</a>
+  <a href="https://www.elastic.co/guide/en/logstash/current/deploying-and-scaling.html">Deploying and Scaling Logstash</a>
 </p>
 
 <p align="center">
@@ -27,11 +27,14 @@ As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.c
 
 
 ### Assumptions
-All containerized custom application services will start with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver in order to send logs to Elastic Stack. Please see **TODO** section below
+* You are free to use your own docker swarm mode infrastructre like for example "Docker for AWS". But the solution provided in this README assumes you are using the Vagrantfile provided in this repository
+* All containerized custom application services will start with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver in order to send logs to Elastic Stack.
 
 ### Prerequisite
 * Infrastructre is setup in [Docker swarm mode](https://docs.docker.com/engine/swarm/)
-* On each cluster node, ensure maximum map count check is set: `sudo sysctl -w vm.max_map_count=262144` _(required for Elasticsearch)_
+* On each Elasticsearch cluster node, ensure maximum map count check is set:  _(required to run Elasticsearch)_
+  * `sudo sysctl -w vm.max_map_count=262144`
+  * `sudo echo 'vm.max_map_count=262144' >> /etc/sysctl.conf` (to persist reboots)
 
 ### Installation instructions
 SSH to the master node in your Docker Swarm cluster. Clone this repo and change directory by following these commands:
@@ -44,13 +47,13 @@ SSH to the master node in your Docker Swarm cluster. Clone this repo and change 
 * Deploy Elastic stack by running the following commands:
   * `export ELASTIC_VERSION=6.2.2`
   * `docker network create --driver overlay elastic`
-  * `docker stack deploy --compose-file docker-compose.yml elastic` _(This will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master and Node configuration. Please note that Elasticsearch is started as a global service which means it will be scalled out automatically as soon as new nodes are added to the docker swarm cluster)_
+  * `docker stack deploy --compose-file docker-compose.yml elastic` _(This will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means data nodes will be scalled out automatically as soon as new nodes are added to the docker swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488)_
 * Check status of the stack services by running the following commands:
   * `docker stack services elastic`
   * `docker stack ps --no-trunc elastic` _(address any error reported at this point)_
   * `curl -XGET -u elastic:changeme 'localhost:9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
-* Once all services are running, execute the following commands:
-  * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to picks up container logs for all services at '`/var/lib/docker/containers/*/*.log`' and forward thtem to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations)_
+* Once all services are running, execute the following commands to deploy filebeat and metricbeat:
+  * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to picks up container logs for all services at '`/var/lib/docker/containers/*/*.log`' (container stdout and stderr logs) and forward thtem to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations. You may wish to read [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices))_
   * Running the following command should print elasticsearch index and one of the rows should have _filebeat-*_
     * `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
   * `docker stack deploy --compose-file metricbeat-docker-compose.yml metricbeat`  _(Metricbeat starts as a global service on all docker swarm nodes. It sends system and docker stats from each node to Elasticsearch. These stats will then be available under metricbeat index in Kibana)_
@@ -69,7 +72,7 @@ Wait until all stacks  started abover are up and running and then run jenkins co
 * Click on Kibana Discover tab to view containers' console logs _(including Jenkins)_ under filebeat-* index. On Kibana Discover tab, you can also view system stats under metricbeat-* indiex
 
 ### Sending messages to Logstash over gelf
-Logstash pipeline is configured to accept messages with gelf log driver. Start an application which sends messages with gelf. An example could be as follows:
+Logstash pipeline is configured to accept messages with gelf log driver. Gelf is one of the plugin mentioned in [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices). Start an application which sends messages with gelf. An example could be as follows:
 * Stop the Jenkins container started earlier: `docker container stop jenkins`
 * Start Jenkins container again but with gelf log driver this time: `docker container run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201  jenkinsci/blueocean`
   * Note that _`--log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201`_ sends container console logs to Elastic stack
@@ -77,6 +80,11 @@ Logstash pipeline is configured to accept messages with gelf log driver. Start a
   * Index name or pattern = `logstash-*`
   * Time-field name = `@timestamp`
 * Click on Discover tab and select logstash-* index in order to see logs sent to Elasticsearch via Logstash
+
+Here is another example:
+* `docker container run --rm -it --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201 alpine ping 8.8.8.8`
+* Login to Kibana and you should see traffic coming into Elasticsearch under `logstash-*` index
+* You can use syslog as well as TLS if you wish to add in your own certs
 
 ### References
 - [Installing Elastic Stack](https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html)
