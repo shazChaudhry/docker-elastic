@@ -16,7 +16,7 @@ filebeat.modules:
 # https://github.com/linuxkit/linuxkit/issues/52
 - module: auditd
   log:
-    enabled: true
+    enabled: false
 
 #=========================== Filebeat prospectors ==============================
 filebeat.prospectors:
