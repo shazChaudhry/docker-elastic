@@ -4,37 +4,11 @@ metricbeat.autodiscover:
     - type: docker
       templates:
         - condition:
-            equals.docker.container.image: redis
-          config:
-            - module: redis
-              metricsets: ["info", "keyspace"]
-              hosts: "${data.host}:${data.port}"
-        - condition:
-            equals.docker.container.image: vfarcic/docker-flow-proxy
+            contains:
+              docker.container.image: "vfarcic/docker-flow-proxy:latest"
           config:
             - module: haproxy
               metricsets: ["info", "stat"]
-              period: 10s
-              hosts: "${data.host}:${data.port}"
-        - condition:
-            equals.docker.container.image: docker.elastic.co/elasticsearch/elasticsearch-platinum
-          config:
-            - module: elasticsearch
-              metricsets: ["node", "node_stats"]
-              period: 10s
-              hosts: "${data.host}:${data.port}"
-        - condition:
-            equals.docker.container.image: docker.elastic.co/kibana/kibana
-          config:
-            - module: kibana
-              metricsets: ["status"]
-              period: 10s
-              hosts: "${data.host}:${data.port}"
-        - condition:
-            equals.docker.container.image: docker.elastic.co/logstash/logstash
-          config:
-            - module: logstash
-              metricsets: ["node", "node_stats"]
               period: 10s
               hosts: "${data.host}:${data.port}"
 
@@ -44,8 +18,8 @@ metricbeat.modules:
   metricsets: ["cpu", "load", "memory", "network", "process", "process_summary", "core", "diskio", "socket"]
   processes: ['.*']
   process.include_top_n:
-    by_cpu: 5      # include top 5 processes by CPU
-    by_memory: 5   # include top 5 processes by memory
+    by_cpu: 5
+    by_memory: 5
   period: 10s
   cpu.metrics:  ["percentages"]
   core.metrics: ["percentages"]
@@ -70,6 +44,12 @@ metricbeat.modules:
   hosts: ["unix:///var/run/docker.sock"]
   period: 10s
 
+#------------------------------- Processors -------------------------------
+processors:
+- add_docker_metadata: ~
+- add_cloud_metadata: ~
+- add_locale: ~
+
 #-------------------------- Elasticsearch output ------------------------------
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
@@ -79,7 +59,8 @@ output.elasticsearch:
 #============================== Dashboards =====================================
 # These settings control loading the sample dashboards to the Kibana index.
 # Loading the dashboards is disabled by default and can be enabled either by setting the options here, or by using the `-setup` CLI flag.
-setup.dashboards.enabled: true
+setup.dashboards:
+  enabled: true
 setup.kibana:
   host: "kibana:5601"
   username: elastic

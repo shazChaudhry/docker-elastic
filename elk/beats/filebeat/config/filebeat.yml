@@ -16,7 +16,7 @@ filebeat.modules:
 # https://github.com/linuxkit/linuxkit/issues/52
 - module: auditd
   log:
-    enabled: false
+    enabled: true
 
 #=========================== Filebeat prospectors ==============================
 filebeat.prospectors:
@@ -28,8 +28,7 @@ filebeat.prospectors:
   json.add_error_key: true
   json.keys_under_root: true
   processors:
-    - add_docker_metadata:
-        host: "unix:///var/run/docker.sock"
+    - add_docker_metadata: ~
     - add_cloud_metadata: ~
     - add_locale: ~
   multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
@@ -53,7 +52,8 @@ output.elasticsearch:
   password: changeme
 
 #============================== Dashboards =====================================
-setup.dashboards.enabled: true
+setup.dashboards:
+  enabled: true
 setup.kibana:
   host: "kibana:5601"
   username: elastic

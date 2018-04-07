@@ -45,20 +45,20 @@ SSH to the master node in your Docker Swarm cluster. Clone this repo and change 
   * `cd docker-elastic`
 
 * Deploy Elastic stack by running the following commands:
-  * `export ELASTIC_VERSION=6.2.2`
+  * `export ELASTIC_VERSION=6.2.3`
   * `docker network create --driver overlay elastic`
   * `docker stack deploy --compose-file docker-compose.yml elastic` _(This will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means data nodes will be scalled out automatically as soon as new nodes are added to the docker swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488)_
 * Check status of the stack services by running the following commands:
   * `docker stack services elastic`
   * `docker stack ps --no-trunc elastic` _(address any error reported at this point)_
-  * `curl -XGET -u elastic:changeme 'localhost:9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
+  * `curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
 * Once all services are running, execute the following commands to deploy filebeat and metricbeat:
   * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to picks up container logs for all services at '`/var/lib/docker/containers/*/*.log`' (container stdout and stderr logs) and forward thtem to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations. You may wish to read [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices))_
   * Running the following command should print elasticsearch index and one of the rows should have _filebeat-*_
-    * `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
+    * `curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/indices?v&pretty'`
   * `docker stack deploy --compose-file metricbeat-docker-compose.yml metricbeat`  _(Metricbeat starts as a global service on all docker swarm nodes. It sends system and docker stats from each node to Elasticsearch. These stats will then be available under metricbeat index in Kibana)_
   * Running the following command should print elasticsearch index and one of the rows should have _metricbeat-*_
-    * `curl -XGET -u elastic:changeme 'localhost:9200/_cat/indices?v&pretty'`
+    * `curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/indices?v&pretty'`
 
 ### Testing
 Wait until all stacks  started abover are up and running and then run jenkins container on one of the Docker Swarm node as follows:
