@@ -51,6 +51,10 @@ output.elasticsearch:
   username: elastic
   password: changeme
 
+xpack.monitoring:
+  enabled: true
+  elasticsearch:
+
 #============================== Dashboards =====================================
 setup.dashboards:
   enabled: true

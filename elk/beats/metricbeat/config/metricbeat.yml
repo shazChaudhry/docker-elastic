@@ -56,6 +56,10 @@ output.elasticsearch:
   username: elastic
   password: changeme
 
+xpack.monitoring:
+  enabled: true
+  elasticsearch:
+
 #============================== Dashboards =====================================
 # These settings control loading the sample dashboards to the Kibana index.
 # Loading the dashboards is disabled by default and can be enabled either by setting the options here, or by using the `-setup` CLI flag.
