@@ -6,7 +6,7 @@ version: "3.6"
 services:
 
   swarm-listener:
-    image: vfarcic/docker-flow-swarm-listener
+    image: dockerflow/docker-flow-swarm-listener:latest
     hostname: swarm-listener
     networks:
       - elastic
@@ -20,7 +20,7 @@ services:
         constraints: [node.role == manager]
 
   proxy:
-    image: vfarcic/docker-flow-proxy
+    image: dockerflow/docker-flow-proxy:latest
     hostname: proxy
     ports:
       - "80:80"
@@ -37,7 +37,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.2.2}
     # https://github.com/docker/swarmkit/issues/1951
-    hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
+    hostname: "{{.Node.Hostname}}-elasticsearch"
     environment:
       - discovery.zen.ping.unicast.hosts=elasticsearch
       - discovery.zen.minimum_master_nodes=1

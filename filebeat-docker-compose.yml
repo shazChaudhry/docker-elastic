@@ -5,7 +5,7 @@ services:
   filebeat:
     image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION:-6.2.2}
     # https://github.com/docker/swarmkit/issues/1951
-    hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
+    hostname: "{{.Node.Hostname}}-filebeat"
     # Need to override user so we can access the log files, and docker.sock
     user: root
     networks:

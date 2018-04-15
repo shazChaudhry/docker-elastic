@@ -3,13 +3,11 @@ metricbeat.autodiscover:
   providers:
     - type: docker
       templates:
-        - condition:
-            contains:
-              docker.container.image: "vfarcic/docker-flow-proxy:latest"
+        - condition.contains:
+            docker.container.image: redis
           config:
-            - module: haproxy
-              metricsets: ["info", "stat"]
-              period: 10s
+            - module: redis
+              metricsets: ["info", "keyspace"]
               hosts: "${data.host}:${data.port}"
 
 metricbeat.modules:
