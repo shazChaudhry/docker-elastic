@@ -43,6 +43,7 @@ services:
       - discovery.zen.minimum_master_nodes=1
       - ELASTIC_PASSWORD=changeme
       - cluster.name=DevOps
+      - node.name={{.Node.Hostname}}-elasticsearch
       - network.host=0.0.0.0
     networks:
       - elastic
@@ -60,7 +61,7 @@ services:
 
   logstash:
     image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.2.2}
-    hostname: logstash
+    hostname: "{{.Node.Hostname}}-logstash"
     environment:
       - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
       - XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
@@ -75,12 +76,12 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.2.2}
-    hostname: kibana
+    hostname: "{{.Node.Hostname}}-kibana"
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=changeme
-      - SERVER_NAME=kibana
+      - SERVER_NAME="{{.Node.Hostname}}-kibana"
     networks:
       - elastic
     volumes:
