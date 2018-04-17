@@ -59,6 +59,15 @@ SSH to the master node in your Docker Swarm cluster. Clone this repo and change 
   * `docker stack deploy --compose-file metricbeat-docker-compose.yml metricbeat`  _(Metricbeat starts as a global service on all docker swarm nodes. It sends system and docker stats from each node to Elasticsearch. These stats will then be available under metricbeat index in Kibana)_
   * Running the following command should print elasticsearch index and one of the rows should have _metricbeat-*_
     * `curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/indices?v&pretty'`
+  * Run packetbeat by executing the following commands _(--cap-add is not supported in docker swarm mode)_:
+    ```
+    docker run -d --rm --name packetbeat \
+    --cap-add=NET_ADMIN \
+    --network=host \
+    --volume $PWD/elk/beats/packetbeat/config/packetbeat.yml:/usr/share/packetbeat/packetbeat.yml:ro \
+    --env HOST=node1 \
+    docker.elastic.co/beats/packetbeat:${ELASTIC_VERSION:-6.2.2}
+    ```
 
 ### Testing
 Wait until all stacks  started abover are up and running and then run jenkins container on one of the Docker Swarm node as follows:
