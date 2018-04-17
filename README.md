@@ -45,7 +45,7 @@ SSH to the master node in your Docker Swarm cluster. Clone this repo and change 
   * `cd docker-elastic`
 
 * Deploy Elastic stack by running the following commands:
-  * `export ELASTIC_VERSION=6.2.3`
+  * `export ELASTIC_VERSION=6.2.4`
   * `docker network create --driver overlay elastic`
   * `docker stack deploy --compose-file docker-compose.yml elastic` _(This will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means data nodes will be scalled out automatically as soon as new nodes are added to the docker swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488)_
 * Check status of the stack services by running the following commands:
