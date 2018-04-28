@@ -16,7 +16,7 @@ The architecture used is shown in the diagrams below
 | High level design | In scope | Not in scope|
 | --- | --- | --- |
 | <img src="./pics/elastic_stack_without_logstash.png" alt="Elastic Stack" style="width: 400px;"/> | Only beats for log files and metrics are used. 2x Elasticsearch and 1x Kibana are used | Ingest nodes are not used |
-|<img src="./pics/basic_logstash_pipeline.png" alt="Elastic Stack" style="width: 400px;"/>|All containerized custom application are designed to start with GELF log driver in order to send logs to Elastic Stack|-|
+| <img src="./pics/basic_logstash_pipeline.png" alt="Elastic Stack" style="width: 400px;"/> | All containerized custom application are designed to start with GELF log driver in order to send logs to Elastic Stack | - |
 
 # Prerequisite
 * Docker swarm mode cluster allocated to running Elastic Stack must have at least two nodes; 1x master and 1x worker
