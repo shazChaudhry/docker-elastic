@@ -26,6 +26,9 @@ services:
       - /var/log/:/var/log/:ro
       # This is needed for filebeat to load logs for auditd module
       # - /var/log/audit/:/var/log/audit/:ro
+    environment:
+      - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1}
+      - KIBANA_HOST=${KIBANA_HOST:-node1}
     # disable strict permission checks
     command: ["--strict.perms=false"]
     deploy:
