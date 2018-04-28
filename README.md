@@ -59,28 +59,34 @@ Execute the following commands to deploy filebeat and metricbeat:
     * `curl -XGET -u elastic:changeme '[ELASTICSEARCH_HOMST]:9200/_cat/indices?v&pretty'`
 
 # Testing
-Wait until all stacks  started abover are up and running and then run jenkins container on one of the Docker Swarm node as follows:
+Wait until all stacks above are started and are up and running and then run jenkins container where filebeat is running:
 * `docker run -d --rm --name jenkins -p 8080:8080 jenkinsci/blueocean`
-* Login at `http://<any_swarm_node_ip>:5601` _(Kibana)_ which should show Management tab
+* Login at `http://[KIBANA_HOST]:5601` which should show Management tab
   * username = `elastic`
   * password = `changeme`
 * On the Kibana Management tab, configure an index pattern
   * Index name or pattern = `filebeat-*`
   * Time-field name = `@timestamp`
-* Click on Kibana Discover tab to view containers' console logs _(including Jenkins)_ under filebeat-* index. On Kibana Discover tab, you can also view system stats under metricbeat-* indiex
+* Click on Kibana Discover tab to view containers' console logs _(including Jenkins)_ under filebeat-* index. Here is a screenshot showing Jenkins container logs:
+<p align="center">
+  <img src="./pics/filebeat-test.PNG" alt="Jenkins Container logs"/>
+</p>
 
 # Sending messages to Logstash over gelf
 Logstash pipeline is configured to accept messages with gelf log driver. Gelf is one of the plugin mentioned in [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices). Start an application which sends messages with gelf. An example could be as follows:
 * Stop the Jenkins container started earlier: `docker container stop jenkins`
-* Start Jenkins container again but with gelf log driver this time: `docker container run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201  jenkinsci/blueocean`
-  * Note that _`--log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201`_ sends container console logs to Elastic stack
+* Start Jenkins container again but with gelf log driver this time: `docker container run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://[LOGSTASH_HOST]:12201  jenkinsci/blueocean`
+  * Note that _`--log-driver=gelf --log-opt gelf-address=udp://[LOGSTASH_HOST]:12201`_ sends container console logs to Elastic stack
 * On the Kibana Management tab, configure an index pattern
   * Index name or pattern = `logstash-*`
   * Time-field name = `@timestamp`
-* Click on Discover tab and select logstash-* index in order to see logs sent to Elasticsearch via Logstash
+* Click on Discover tab and select logstash-* index in order to see logs sent to Elasticsearch via Logstash. Here is a screenshot showing Jenkins container logs:
+<p align="center">
+  <img src="./pics/gelf-test.PNG" alt="Jenkins Container logs of Gelf plugin"/>
+</p>
 
 Here is another example:
-* `docker container run --rm -it --log-driver=gelf --log-opt gelf-address=udp://127.0.0.1:12201 alpine ping 8.8.8.8`
+* `docker container run --rm -it --log-driver=gelf --log-opt gelf-address=udp://[LOGSTASH_HOST]:12201 alpine ping 8.8.8.8`
 * Login to Kibana and you should see traffic coming into Elasticsearch under `logstash-*` index
 * You can use syslog as well as TLS if you wish to add in your own certs
 
