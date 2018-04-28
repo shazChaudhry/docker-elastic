@@ -12,11 +12,24 @@ As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.c
 * All containerized custom application are designed to start with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver in order to send logs to Elastic Stack
 
 # Architecture
-The architecture used is shown in the diagrams below
-High level design | In scope | Not in scope
------------------ | -------- | ------------
-<img src="./pics/elastic_stack_without_logstash.png" alt="Elastic Stack" style="width: 400px;"/> | Only beats for log files and metrics are used. 2x Elasticsearch and 1x Kibana are used | Ingest nodes are not used
-<img src="./pics/basic_logstash_pipeline.png" alt="Elastic Stack" style="width: 400px;"/> | All containerized custom application are designed to start with GELF log driver in order to send logs to Elastic Stack | -
+The architecture used is shown in the table below
+<table>
+  <tr>
+    <th>High level design</th>
+    <th>In scope</th>
+    <th>Not in scope</th>
+  </tr>
+  <tr>
+    <td><img src="./pics/elastic_stack_without_logstash.png" alt="Elastic Stack" style="width: 400px;"/></td>
+    <td>Only beats for log files and metrics are used. 2x Elasticsearch and 1x Kibana are used</td>
+    <td>Ingest nodes are not used</td>
+  </tr>
+  <tr>
+    <td><img src="./pics/basic_logstash_pipeline.png" alt="Elastic Stack" style="width: 400px;"/></td>
+    <td>All containerized custom application are designed to start with GELF log driver in order to send logs to Elastic Stack</td>
+    <td>-</td>
+  </tr>
+</table>
 
 # Prerequisite
 * Docker swarm mode cluster allocated to running Elastic Stack must have at least two nodes; 1x master and 1x worker
