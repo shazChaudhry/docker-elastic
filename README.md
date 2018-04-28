@@ -13,10 +13,10 @@ As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.c
 
 # Architecture
 The architecture used is shown in the diagrams below
-| High level design | In scope | Not in scope|
-| --- | --- | --- |
-| <img src="./pics/elastic_stack_without_logstash.png" alt="Elastic Stack" style="width: 400px;"/> | Only beats for log files and metrics are used. 2x Elasticsearch and 1x Kibana are used | Ingest nodes are not used |
-| <img src="./pics/basic_logstash_pipeline.png" alt="Elastic Stack" style="width: 400px;"/> | All containerized custom application are designed to start with GELF log driver in order to send logs to Elastic Stack | - |
+High level design | In scope | Not in scope
+----------------- | -------- | ------------
+<img src="./pics/elastic_stack_without_logstash.png" alt="Elastic Stack" style="width: 400px;"/> | Only beats for log files and metrics are used. 2x Elasticsearch and 1x Kibana are used | Ingest nodes are not used
+<img src="./pics/basic_logstash_pipeline.png" alt="Elastic Stack" style="width: 400px;"/> | All containerized custom application are designed to start with GELF log driver in order to send logs to Elastic Stack | -
 
 # Prerequisite
 * Docker swarm mode cluster allocated to running Elastic Stack must have at least two nodes; 1x master and 1x worker
@@ -91,8 +91,8 @@ Here is another example:
 * You can use syslog as well as TLS if you wish to add in your own certs
 
 # References
-- [Installing Elastic Stack](https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html)
 - [Elastic Examples](https://github.com/elastic/examples)
+- [Unifying APM, Logs, and Metrics for Deeper Operational Visibility](https://www.elastic.co/webinars/agumenting-logs-and-metrics-with-apm?blade=tw&hulk=social)
 - [ Machine Learning in the Elastic Stack - YouTube](https://www.youtube.com/watch?v=n6xW6YWYgs0&feature=youtu.be)
 - [Monitoring Modern Banking API Architectures with the Elastic Stack, Part II](https://www.elastic.co/blog/psd2-architectures-with-the-elastic-stack-part-ii)
 - [Security and Threat Detection with the Elastic Stack](https://www.elastic.co/webinars/security-and-threat-detection-with-the-elastic-stack)
