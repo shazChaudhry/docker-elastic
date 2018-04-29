@@ -1,0 +1,36 @@
+version: "3.6"
+
+services:
+
+  packetbeat:
+    image: docker.elastic.co/beats/packetbeat:${ELASTIC_VERSION:-6.2.2}
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: "{{.Node.Hostname}}-packetbeat"
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    networks:
+      - elastic
+    configs:
+      - source: pb_config
+        target: /usr/share/packetbeat/packetbeat.yml
+        mode: 0440
+    volumes:
+      # - packetbeat:/usr/share/packetbeat/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1}
+      - KIBANA_HOST=${KIBANA_HOST:-node1}
+    command: ["--strict.perms=false"]
+    deploy:
+      mode: global
+
+networks:
+  elastic:
+    external: true
+
+# volumes:
+#   packetbeat:
+
+configs:
+  pb_config:
+    file: $PWD/elk/beats/packetbeat/config/packetbeat.yml

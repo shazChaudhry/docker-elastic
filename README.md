@@ -70,6 +70,8 @@ Execute the following commands to deploy filebeat and metricbeat:
   * `docker stack deploy --compose-file metricbeat-docker-compose.yml metricbeat`  _(Metricbeat starts as a global service on all docker swarm nodes. It sends system and docker stats from each node to Elasticsearch. These stats will then be available under metricbeat index in Kibana)_
   * Running the following command should print elasticsearch index and one of the rows should have _metricbeat-*_
     * `curl -XGET -u elastic:changeme '[ELASTICSEARCH_HOMST]:9200/_cat/indices?v&pretty'`
+  * `docker stack deploy --compose-file packetbeat-docker-compose.yml packetbeat` _(Packetbeat starts as a global service on all docker swarm nodes)_
+  > NOTE: Packetbeat does not appear to work in docker swarm mode. See https://discuss.elastic.co/t/run-packetbeat-in-docker-swarm-mode/129937
 
 # Testing
 Wait until all stacks above are started and are up and running and then run jenkins container where filebeat is running:
