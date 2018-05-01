@@ -9,7 +9,7 @@ As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.c
 
 # Assumptions
 * Infrastructre is setup in [Docker swarm mode](https://docs.docker.com/engine/swarm/)
-* All containerized custom application are designed to start with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver in order to send logs to Elastic Stack
+* All containerized custom applications are designed to start with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver in order to send logs to Elastic Stack
 
 # Architecture
 The architecture used is shown in the table below
@@ -26,14 +26,14 @@ The architecture used is shown in the table below
   </tr>
   <tr>
     <td><img src="./pics/basic_logstash_pipeline.png" alt="Elastic Stack" style="width: 400px;"/></td>
-    <td>All containerized custom application are designed to start with GELF log driver in order to send logs to Elastic Stack</td>
+    <td>All containerized custom applications are designed to start with GELF log driver in order to send logs to Elastic Stack</td>
     <td>-</td>
   </tr>
 </table>
 
 # Prerequisite
-* Docker swarm mode cluster allocated to running Elastic Stack must have at least two nodes; 1x master and 1x worker
-* Docekr swarm mode cluster allocated to running containerized custom applications must have at least on node; 1x master
+* A docker swarm mode cluster allocated to running Elastic Stack must have at least two nodes; 1x master and 1x worker
+* A docekr swarm mode cluster allocated to running containerized custom applications must have at least on node; 1x master
 * On each Elasticsearch cluster node, maximum map count check should be set to as follows:  _(required to run Elasticsearch)_
   * `sudo sysctl -w vm.max_map_count=262144`
   * `sudo echo 'vm.max_map_count=262144' >> /etc/sysctl.conf` (to persist reboots)
