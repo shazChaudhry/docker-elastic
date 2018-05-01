@@ -1,35 +1,57 @@
+#============================== Network device ================================
 packetbeat.interfaces.device: any
 
-packetbeat.protocols:
-
-- type: http
-  ports: [80, 8080, 8081, 5000, 8002, 9200, 5601]
-  hide_keywords: ["pass", "password", "passwd"]
-  send_headers: ["User-Agent", "Cookie", "Set-Cookie"]
-  split_cookie: true
-  real_ip_header: "X-Forwarded-For"
-
-- type: pgsql
-  ports: [5432]
-
-- type: redis
-  ports: [6379]
-
-- type: tls
-  ports: [443]
-
+#================================== Flows =====================================
 packetbeat.flows:
   timeout: 30s
   period: 10s
 
-#-------------------------- Elasticsearch output ------------------------------
+#========================== Transaction protocols =============================
+packetbeat.protocols:
+- type: http
+  ports: [80, 8080, 5000]
+  send_headers: true
+  send_all_headers: true
+
+- type: tls
+  ports: [443]
+  send_certificates: false
+
+#=========================== Monitored processes ==============================
+packetbeat.procs:
+  enabled: false
+  monitored:
+    - process: pgsql
+      cmdline_grep: postgres
+
+#================================ Processors ===================================
+# For example, you can use the following processors to keep the fields that
+# contain CPU load percentages, but remove the fields that contain CPU ticks
+# values:
+processors:
+- include_fields:
+   fields: ["cpu"]
+- drop_fields:
+   fields: ["cpu.user", "cpu.system"]
+# The following example drops the events that have the HTTP response code 200:
+- drop_event:
+   when:
+      equals:
+          http.code: 200
+# The following example enriches each event with metadata from the cloud provider about the host machine.
+- add_docker_metadata:
+   host: "unix:///var/run/docker.sock"
+- add_cloud_metadata: ~
+- add_locale: ~
+
+#-------------------------- Elasticsearch output -------------------------------
 output.elasticsearch:
-  hosts: ["${HOST}:9200"]
+  hosts: ["${ELASTICSEARCH_HOST}:9200"]
   username: elastic
   password: changeme
 
 xpack.monitoring:
-  enabled: true
+  enabled: false
   elasticsearch:
 
 #============================== Dashboards =====================================
@@ -38,6 +60,6 @@ xpack.monitoring:
 setup.dashboards:
   enabled: true
 setup.kibana:
-  host: "${HOST}:5601"
+  host: "${KIBANA_HOST}:5601"
   username: elastic
   password: changeme

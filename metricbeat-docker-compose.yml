@@ -18,6 +18,9 @@ services:
       - /:/hostfs:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - metricbeat:/usr/share/metricbeat/data
+    environment:
+      - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1}
+      - KIBANA_HOST=${KIBANA_HOST:-node1}
     # disable strict permission checks
     command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
     deploy:
