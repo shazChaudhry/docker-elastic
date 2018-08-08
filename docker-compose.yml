@@ -42,6 +42,7 @@ services:
       - discovery.zen.ping.unicast.hosts=elasticsearch
       - discovery.zen.minimum_master_nodes=1
       - ELASTIC_PASSWORD=changeme
+      - xpack.security.enabled=true
       - cluster.name=DevOps
       - node.name={{.Node.Hostname}}-elasticsearch
       - network.host=0.0.0.0

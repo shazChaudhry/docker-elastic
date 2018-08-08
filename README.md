@@ -56,6 +56,13 @@ SSH in to the master node of the Docker Swarm cluster allocated to running Elast
   * `curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
 * If in case beats are also desired to be installed in this very docker swarm cluster, then use the instructions provided in the next section
 
+# Enable X-PACK security _(login page)_
+Login at `http://[KIBANA_HOST]:5601` which should show a Management tab. You will need to either update your license or start a 30-day trial. See the screenshots below:
+<p align="center">
+  <img src="./pics/license_management.JPG" alt="Management tab" style="width: 400px;"/>
+  <img src="./pics/license_management_2.JPG" alt="Management tab" style="width: 400px;"/>
+</p>
+
 # Deploy Beats
 SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions in the previous section
 
