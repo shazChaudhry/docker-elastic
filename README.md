@@ -57,11 +57,22 @@ SSH in to the master node of the Docker Swarm cluster allocated to running Elast
 * If in case beats are also desired to be installed in this very docker swarm cluster, then use the instructions provided in the next section
 
 # Enable X-PACK security _(login page)_
+When you install the default distribution of the Elastic Stack, you receive a basic license.
+
 Login at `http://[KIBANA_HOST]:5601` which should show a Management tab. You will need to either update your license or start a 30-day trial. See the screenshots below:
-<p align="center">
-  <img src="./pics/license_management.JPG" alt="Management tab" style="width: 400px;"/>
-  <img src="./pics/license_management_2.JPG" alt="Management tab" style="width: 400px;"/>
-</p>
+
+<table>
+  <tr>
+    <th>Management tab</th>
+    <th>For platinum features, start a 30-day trial</th>
+  </tr>
+  <tr>
+    <td><img src="./pics/license_management.JPG" alt="Management tab" style="width: 400px;"/></td>
+    <td><img src="./pics/license_management_2.JPG" alt="Management tab" style="width: 320px;"/></td>
+  </tr>
+</table>
+
+For the full list of free features that are included in the basic license, see: https://www.elastic.co/subscriptions
 
 # Deploy Beats
 SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions in the previous section
