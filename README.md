@@ -47,7 +47,7 @@ SSH in to the master node of the Docker Swarm cluster allocated to running Elast
   * `cd docker-elastic`
 
 * Deploy Elastic stack by running the following commands:
-  * `export ELASTIC_VERSION=6.2.4`
+  * `export ELASTIC_VERSION=6.3.2`
   * `docker network create --driver overlay elastic`
   * `docker stack deploy --compose-file docker-compose.yml elastic` _(This will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means data nodes will be scalled out automatically as soon as new nodes are added to the docker swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488)_
 * Check status of the stack services by running the following commands:
@@ -56,11 +56,29 @@ SSH in to the master node of the Docker Swarm cluster allocated to running Elast
   * `curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
 * If in case beats are also desired to be installed in this very docker swarm cluster, then use the instructions provided in the next section
 
+# Enable X-PACK security _(login page)_
+When you install the default distribution of the Elastic Stack, you receive a basic license.
+
+Login at `http://[KIBANA_HOST]:5601` which should show a Management tab. You will need to either update your license or start a 30-day trial. See the screenshots below:
+
+<table>
+  <tr>
+    <th>Management tab</th>
+    <th>For platinum features, start a 30-day trial</th>
+  </tr>
+  <tr>
+    <td><img src="./pics/license_management.JPG" alt="Management tab" style="width: 400px;"/></td>
+    <td><img src="./pics/license_management_2.JPG" alt="Management tab" style="width: 320px;"/></td>
+  </tr>
+</table>
+
+For the full list of free features that are included in the basic license, see: https://www.elastic.co/subscriptions
+
 # Deploy Beats
 SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions in the previous section
 
 Execute the following commands to deploy filebeat and metricbeat:
-  * `export ELASTIC_VERSION=6.2.4`
+  * `export ELASTIC_VERSION=6.3.2`
   * `docker network create --driver overlay elastic`
   * Edit "filebeat-docker-compose.yml" file. Change environment variables for Kibana and Elasticseaerch hosts
   * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to picks up container logs for all services at '`/var/lib/docker/containers/*/*.log`' (container stdout and stderr logs) and forward thtem to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations. You may wish to read [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices))_
