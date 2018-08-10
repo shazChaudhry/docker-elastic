@@ -19,7 +19,7 @@ filebeat.modules:
     enabled: false
 
 #=========================== Filebeat prospectors ==============================
-filebeat.prospectors:
+filebeat.inputs:
 - type: log
   enabled: true
   paths:
