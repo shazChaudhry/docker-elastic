@@ -26,13 +26,12 @@ services:
       - "80:80"
       - "443:443"
       - "9200:9200"
-      - "5601:5601"
     networks:
       - elastic
     environment:
       - LISTENER_ADDRESS=swarm-listener
       - MODE=swarm
-      - BIND_PORTS=9200,5601
+      - BIND_PORTS=9200
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-6.3.2}
@@ -44,6 +43,7 @@ services:
       - ELASTIC_PASSWORD=changeme
       - xpack.security.enabled=true
       - xpack.monitoring.collection.enabled=true
+      - xpack.license.self_generated.type=trial
       - cluster.name=DevOps
       - node.name={{.Node.Hostname}}-elasticsearch
       - network.host=0.0.0.0
@@ -94,7 +94,7 @@ services:
         - com.df.distribute=true
         - com.df.servicePath=/
         - com.df.port=5601
-        - com.df.srcPort=5601
+        - com.df.srcPort=80
 
 networks:
     elastic:

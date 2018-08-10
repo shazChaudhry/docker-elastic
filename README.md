@@ -31,6 +31,8 @@ The architecture used is shown in the table below
   </tr>
 </table>
 
+For the full list of free features that are included in the basic license, see: https://www.elastic.co/subscriptions
+
 # Prerequisite
 * A docker swarm mode cluster allocated to running Elastic Stack must have at least two nodes; 1x master and 1x worker
 * A docekr swarm mode cluster allocated to running containerized custom applications must have at least on node; 1x master
@@ -56,24 +58,6 @@ SSH in to the master node of the Docker Swarm cluster allocated to running Elast
   * `curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
 * If in case beats are also desired to be installed in this very docker swarm cluster, then use the instructions provided in the next section
 
-# Enable X-PACK security _(login page)_
-When you install the default distribution of the Elastic Stack, you receive a basic license.
-
-Login at `http://[KIBANA_HOST]:5601` which should show a Management tab. You will need to either update your license or start a 30-day trial. See the screenshots below:
-
-<table>
-  <tr>
-    <th>Management tab</th>
-    <th>For platinum features, start a 30-day trial</th>
-  </tr>
-  <tr>
-    <td><img src="./pics/license_management.JPG" alt="Management tab" style="width: 400px;"/></td>
-    <td><img src="./pics/license_management_2.JPG" alt="Management tab" style="width: 320px;"/></td>
-  </tr>
-</table>
-
-For the full list of free features that are included in the basic license, see: https://www.elastic.co/subscriptions
-
 # Deploy Beats
 SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions in the previous section
 
@@ -94,7 +78,7 @@ Execute the following commands to deploy filebeat and metricbeat:
 # Testing
 Wait until all stacks above are started and are up and running and then run jenkins container where filebeat is running:
 * `docker run -d --rm --name jenkins -p 8080:8080 jenkinsci/blueocean`
-* Login at `http://[KIBANA_HOST]:5601` which should show Management tab
+* Login at `http://[KIBANA_HOST]` which should show Management tab
   * username = `elastic`
   * password = `changeme`
 * On the Kibana Management tab, configure an index pattern

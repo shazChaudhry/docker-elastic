@@ -60,6 +60,6 @@ xpack.monitoring:
 setup.dashboards:
   enabled: true
 setup.kibana:
-  host: "${KIBANA_HOST}:5601"
+  host: "${KIBANA_HOST}:80"
   username: elastic
   password: changeme
