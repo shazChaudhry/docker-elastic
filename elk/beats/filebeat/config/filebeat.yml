@@ -18,21 +18,33 @@ filebeat.modules:
   log:
     enabled: false
 
-#=========================== Filebeat prospectors ==============================
+#========================== Filebeat autodiscover ==============================
+# Autodiscover allows you to detect changes in the system and spawn new modules or inputs as they happen.
+filebeat.autodiscover:
+# Autodiscover docker containers and parse logs
+  providers:
+    - type: docker
+      templates:
+          config:
+            - type: docker
+              containers.ids:
+                - "${data.docker.container.id}"
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+              # exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+
+#=========================== Filebeat inputs ==============================
 filebeat.inputs:
-- type: log
+#------------------------------ Docker input --------------------------------
+- type: docker
   enabled: true
-  paths:
-    - '/var/lib/docker/containers/*/*.log'
-  json.message_key: log
-  json.add_error_key: true
-  json.keys_under_root: true
+  containers.ids:
+    - "*"
   processors:
     - add_docker_metadata: ~
     - add_cloud_metadata: ~
     - add_locale: ~
-  multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
-  multiline.match: after
+#------------------------------ Log input --------------------------------
 # - type: log
 #   enabled: true
 #   paths:
@@ -41,8 +53,11 @@ filebeat.inputs:
 #   json.message_key: log
 #   json.add_error_key: true
 #   json.keys_under_root: true
-#   multiline.pattern: '^[[:space:]]+|^Caused by:'
-#   multiline.negate: false
+#   processors:
+#     - add_docker_metadata: ~
+#     - add_cloud_metadata: ~
+#     - add_locale: ~
+#   multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
 #   multiline.match: after
 
 #========================== Elasticsearch output ===============================
