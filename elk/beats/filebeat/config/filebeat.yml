@@ -29,9 +29,6 @@ filebeat.autodiscover:
             - type: docker
               containers.ids:
                 - "${data.docker.container.id}"
-              paths:
-                - /var/lib/docker/containers/${data.docker.container.id}/*.log
-              # exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
 
 #=========================== Filebeat inputs ==============================
 filebeat.inputs:
@@ -40,16 +37,24 @@ filebeat.inputs:
   enabled: true
   containers.ids:
     - "*"
+  paths:
+    - /var/lib/docker/containers/${data.docker.container.id}/*.log
+  # json.message_key: log
+  # json.add_error_key: true
+  # json.keys_under_root: true
+  exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+  multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
+  multiline.match: after
   processors:
     - add_docker_metadata: ~
     - add_cloud_metadata: ~
     - add_locale: ~
+
 #------------------------------ Log input --------------------------------
 # - type: log
 #   enabled: true
 #   paths:
-#     # path to jenkins build logs
-#     - /var/lib/docker/volumes/jenkins_home/_data/jobs/*/builds/*/log
+#     - '/var/lib/docker/containers/*/*.log'
 #   json.message_key: log
 #   json.add_error_key: true
 #   json.keys_under_root: true
@@ -58,6 +63,18 @@ filebeat.inputs:
 #     - add_cloud_metadata: ~
 #     - add_locale: ~
 #   multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
+#   multiline.match: after
+#
+# - type: log
+#   enabled: false
+#   paths:
+#     # path to jenkins build logs
+#     - /var/lib/docker/volumes/jenkins_home/_data/jobs/*/builds/*/log
+#   json.message_key: log
+#   json.add_error_key: true
+#   json.keys_under_root: true
+#   multiline.pattern: '^[[:space:]]+|^Caused by:'
+#   multiline.negate: false
 #   multiline.match: after
 
 #========================== Elasticsearch output ===============================
