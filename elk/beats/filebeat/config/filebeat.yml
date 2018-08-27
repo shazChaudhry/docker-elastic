@@ -18,23 +18,55 @@ filebeat.modules:
   log:
     enabled: false
 
-#=========================== Filebeat prospectors ==============================
+#========================== Filebeat autodiscover ==============================
+# Autodiscover allows you to detect changes in the system and spawn new modules or inputs as they happen.
+filebeat.autodiscover:
+# Autodiscover docker containers and parse logs
+  providers:
+    - type: docker
+      templates:
+          config:
+            - type: docker
+              containers.ids:
+                - "${data.docker.container.id}"
+
+#=========================== Filebeat inputs ==============================
 filebeat.inputs:
-- type: log
+#------------------------------ Docker input --------------------------------
+- type: docker
   enabled: true
+  containers.ids:
+    - "*"
   paths:
-    - '/var/lib/docker/containers/*/*.log'
-  json.message_key: log
-  json.add_error_key: true
-  json.keys_under_root: true
+    - /var/lib/docker/containers/${data.docker.container.id}/*.log
+  # json.message_key: log
+  # json.add_error_key: true
+  # json.keys_under_root: true
+  exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+  multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
+  multiline.match: after
   processors:
     - add_docker_metadata: ~
     - add_cloud_metadata: ~
     - add_locale: ~
-  multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
-  multiline.match: after
+
+#------------------------------ Log input --------------------------------
 # - type: log
 #   enabled: true
+#   paths:
+#     - '/var/lib/docker/containers/*/*.log'
+#   json.message_key: log
+#   json.add_error_key: true
+#   json.keys_under_root: true
+#   processors:
+#     - add_docker_metadata: ~
+#     - add_cloud_metadata: ~
+#     - add_locale: ~
+#   multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
+#   multiline.match: after
+#
+# - type: log
+#   enabled: false
 #   paths:
 #     # path to jenkins build logs
 #     - /var/lib/docker/volumes/jenkins_home/_data/jobs/*/builds/*/log
