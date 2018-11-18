@@ -51,8 +51,8 @@ processors:
 #-------------------------- Elasticsearch output ------------------------------
 output.elasticsearch:
   hosts: ["${ELASTICSEARCH_HOST}:9200"]
-  username: elastic
-  password: changeme
+  username: ${ELASTICSEARCH_USERNAME}
+  password: ${ELASTICSEARCH_PASSWORD}
 
 xpack.monitoring:
   enabled: true
@@ -65,5 +65,5 @@ setup.dashboards:
   enabled: true
 setup.kibana:
   host: "${KIBANA_HOST}:80"
-  username: elastic
-  password: changeme
+  username: ${ELASTICSEARCH_USERNAME}
+  password: ${ELASTICSEARCH_PASSWORD}

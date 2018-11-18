@@ -3,7 +3,7 @@ version: "3.6"
 services:
 
   packetbeat:
-    image: docker.elastic.co/beats/packetbeat:${ELASTIC_VERSION:-6.4.3}
+    image: docker.elastic.co/beats/packetbeat:${ELASTIC_VERSION:-6.5.0}
     # https://github.com/docker/swarmkit/issues/1951
     hostname: "{{.Node.Hostname}}-packetbeat"
     user: root
@@ -18,6 +18,8 @@ services:
     environment:
       - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1}
       - KIBANA_HOST=${KIBANA_HOST:-node1}
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME:-elastic}
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
     command: ["--strict.perms=false"]
     deploy:
       mode: global
