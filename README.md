@@ -40,15 +40,16 @@ For the full list of free features that are included in the basic license, see: 
   * `sudo sysctl -w vm.max_map_count=262144`
   * `sudo echo 'vm.max_map_count=262144' >> /etc/sysctl.conf` (to persist reboots)
 
-# Deploy Elastic Stack
-SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack. Clone this repo and change directory by following these commands:
+# Get docker compose files
+You will need thse file to deploy Eleasticsearch, Logstash, Kibana, and Beats. So, first SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack and clone this repo by following these commands:
   * `alias git='docker run -it --rm --name git -v $PWD:/git -w /git alpine/git'`
   * `git version`
   * `git clone https://github.com/shazChaudhry/docker-elastic.git`
   * `sudo chown -R $USER:$USER docker-elastic`
   * `cd docker-elastic`
 
-* Deploy Elastic stack by running the following commands:
+# Deploy Elastic Stack
+* SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack. Deploy Elastic stack by running the following commands:
   * `export ELASTIC_VERSION=6.5.0`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
@@ -57,11 +58,11 @@ SSH in to the master node of the Docker Swarm cluster allocated to running Elast
 * Check status of the stack services by running the following commands:
   * `docker stack services elastic`
   * `docker stack ps --no-trunc elastic` _(address any error reported at this point)_
-  * `curl -XGET -u elastic:changeme '127.0.0.1:9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
+  * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} '127.0.0.1:9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
 * If in case beats are also desired to be installed in this very docker swarm cluster, then use the instructions provided in the next section
 
 # Deploy Beats
-SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions in the previous section
+SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions above.
 
 Execute the following commands to deploy filebeat and metricbeat:
   * `export ELASTIC_VERSION=6.5.0`
@@ -72,11 +73,11 @@ Execute the following commands to deploy filebeat and metricbeat:
   * `docker network create --driver overlay elastic`
   * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to picks up container logs for all services at '`/var/lib/docker/containers/*/*.log`' (container stdout and stderr logs) and forward thtem to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations. You may wish to read [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices))_
   * Running the following command should print elasticsearch index and one of the rows should have _filebeat-*_
-    * `curl -XGET -u elastic:changeme ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
+    * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
   * Edit "metricbeat-docker-compose.yml" file. Change environment variables for Kibana and Elasticseaerch hosts
   * `docker stack deploy --compose-file metricbeat-docker-compose.yml metricbeat`  _(Metricbeat starts as a global service on all docker swarm nodes. It sends system and docker stats from each node to Elasticsearch. These stats will then be available under metricbeat index in Kibana)_
   * Running the following command should print elasticsearch index and one of the rows should have _metricbeat-*_
-    * `curl -XGET -u elastic:changeme ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
+    * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
   * `docker stack deploy --compose-file packetbeat-docker-compose.yml packetbeat` _(Packetbeat starts as a global service on all docker swarm nodes)_
   > NOTE: Packetbeat does not appear to work in docker swarm mode. See https://discuss.elastic.co/t/run-packetbeat-in-docker-swarm-mode/129937
 
