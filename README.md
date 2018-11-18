@@ -42,7 +42,7 @@ For the full list of free features that are included in the basic license, see: 
 
 # Get docker compose files
 You will need thse file to deploy Eleasticsearch, Logstash, Kibana, and Beats. So, first SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack and clone this repo by following these commands:
-  * `alias git='docker run -it --rm --name git -v $PWD:/git -w /git alpine/git'` _(You only need this alias if git is *not* already installed on your machine. This alias will allow you to clone the repo using git container)_
+  * `alias git='docker run -it --rm --name git -v $PWD:/git -w /git alpine/git'` _(This alias is only required if git is *not* already installed on your machine. This alias will allow you to clone the repo using a git container)_
   * `git version`
   * `git clone https://github.com/shazChaudhry/docker-elastic.git`
   * `sudo chown -R $USER:$USER docker-elastic`
