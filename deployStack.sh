@@ -1,4 +1,9 @@
 #!/bin/bash
 
+export ELASTIC_VERSION=6.5.3
+export ELASTICSEARCH_USERNAME=elastic
+export ELASTICSEARCH_PASSWORD=changeme
+export ELASTICSEARCH_HOST=node1
+
 docker network create --driver overlay elastic
-ELASTIC_VERSION=6.5.0 docker stack deploy -c docker-compose.yml elastic
+docker stack deploy --compose-file docker-compose.yml elastic
