@@ -84,7 +84,7 @@ Execute the following commands to deploy filebeat and metricbeat:
 
 # Testing
 Wait until all stacks above are started and are up and running and then run jenkins container where filebeat is running:
-* `docker run -d --rm --name jenkins -p 8080:8080 jenkinsci/blueocean`
+* `docker container run -d --rm --name jenkins -p 8080:8080 jenkinsci/blueocean`
 * Login at `http://[KIBANA_HOST]` which should show Management tab
   * username = `elastic`
   * password = `changeme`
@@ -98,9 +98,12 @@ Wait until all stacks above are started and are up and running and then run jenk
 
 # Sending messages to Logstash over gelf
 Logstash pipeline is configured to accept messages with gelf log driver. Gelf is one of the plugin mentioned in [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices). Start an application which sends messages with gelf. An example could be as follows:
-* Stop the Jenkins container started earlier: `docker container stop jenkins`
-* Start Jenkins container again but with gelf log driver this time: `docker container run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://[LOGSTASH_HOST]:12201  jenkinsci/blueocean`
-  * Note that _`--log-driver=gelf --log-opt gelf-address=udp://[LOGSTASH_HOST]:12201`_ sends container console logs to Elastic stack
+* Stop the Jenkins container started earlier:
+  * `docker container stop jenkins`
+* Start Jenkins container again but with gelf log driver this time:
+  * `export LOGSTASH_HOST=node1`
+  * `docker container run -d --rm --name jenkins -p 8080:8080 --log-driver=gelf --log-opt gelf-address=udp://${LOGSTASH_HOST}:12201 jenkinsci/blueocean`
+  * Note that _`--log-driver=gelf --log-opt gelf-address=udp://${LOGSTASH_HOST}:12201`_ sends container console logs to Elastic stack
 * On the Kibana Management tab, configure an index pattern
   * Index name or pattern = `logstash-*`
   * Time-field name = `@timestamp`
@@ -110,7 +113,7 @@ Logstash pipeline is configured to accept messages with gelf log driver. Gelf is
 </p>
 
 Here is another example:
-* `docker container run --rm -it --log-driver=gelf --log-opt gelf-address=udp://[LOGSTASH_HOST]:12201 alpine ping 8.8.8.8`
+* `docker container run --rm -it --log-driver=gelf --log-opt gelf-address=udp://${LOGSTASH_HOST}:12201 alpine ping 8.8.8.8`
 * Login to Kibana and you should see traffic coming into Elasticsearch under `logstash-*` index
 * You can use syslog as well as TLS if you wish to add in your own certs
 
