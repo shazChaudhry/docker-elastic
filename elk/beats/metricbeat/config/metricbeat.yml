@@ -1,4 +1,7 @@
+# https://github.com/elastic/beats/blob/master/metricbeat/metricbeat.reference.yml
+
 #-------------------------------- Autodiscovery -------------------------------
+# Autodiscover allows you to detect changes in the system and spawn new modules as they happen.
 metricbeat.autodiscover:
   providers:
     - type: docker
@@ -42,28 +45,32 @@ metricbeat.modules:
   hosts: ["unix:///var/run/docker.sock"]
   period: 10s
 
-#------------------------------- Processors -------------------------------
+#================================ Processors ===================================
 processors:
-- add_docker_metadata: ~
 - add_cloud_metadata: ~
-- add_locale: ~
+- add_docker_metadata: ~
+- add_locale:
+    format: offset
+- add_host_metadata:
+    netinfo.enabled: true
 
-#-------------------------- Elasticsearch output ------------------------------
+#========================== Elasticsearch output ===============================
 output.elasticsearch:
   hosts: ["${ELASTICSEARCH_HOST}:9200"]
   username: ${ELASTICSEARCH_USERNAME}
   password: ${ELASTICSEARCH_PASSWORD}
 
-xpack.monitoring:
-  enabled: true
-  elasticsearch:
-
 #============================== Dashboards =====================================
-# These settings control loading the sample dashboards to the Kibana index.
-# Loading the dashboards is disabled by default and can be enabled either by setting the options here, or by using the `-setup` CLI flag.
 setup.dashboards:
   enabled: true
+
+#============================== Kibana =========================================
 setup.kibana:
   host: "${KIBANA_HOST}:80"
   username: ${ELASTICSEARCH_USERNAME}
   password: ${ELASTICSEARCH_PASSWORD}
+
+#============================== Xpack Monitoring ===============================
+xpack.monitoring:
+  enabled: true
+  elasticsearch:
