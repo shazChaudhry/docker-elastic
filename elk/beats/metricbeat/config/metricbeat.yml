@@ -5,13 +5,8 @@
 metricbeat.autodiscover:
   providers:
     - type: docker
-      templates:
-        - condition.contains:
-            docker.container.image: redis
-          config:
-            - module: redis
-              metricsets: ["info", "keyspace"]
-              hosts: "${data.host}:${data.port}"
+      # https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-hints.html
+      hints.enabled: true
 
 metricbeat.modules:
 #------------------------------- System Module -------------------------------
