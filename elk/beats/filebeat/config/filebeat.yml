@@ -1,81 +1,48 @@
-#==========================  Modules configuration =============================
-filebeat.modules:
+# https://github.com/elastic/beats/blob/master/filebeat/filebeat.reference.yml
 
-#------------------------------- System Module -------------------------------
+filebeat.modules:
 - module: system
-  # Syslog
   syslog:
     enabled: true
-    var.paths: ["/var/log/syslog*"]
   auth:
     enabled: true
-    var.paths: ["/var/log/auth.log*"]
-
-#------------------------------- Auditd Module -------------------------------
-# Does not look like Auditd is supported in Alpine linux:
-# https://github.com/linuxkit/linuxkit/issues/52
 - module: auditd
   log:
-    enabled: false
+    # Does not look like Auditd is supported in Alpine linux: https://github.com/linuxkit/linuxkit/issues/52
+    enabled: true
+
+filebeat.inputs:
+- type: docker
+  enabled: true
+  containers:
+    stream: all # can be all, stdout or stderr
+    ids:
+      - '*'
+  exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+  multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
+  multiline.match: after
 
 #========================== Filebeat autodiscover ==============================
 # Autodiscover allows you to detect changes in the system and spawn new modules or inputs as they happen.
 filebeat.autodiscover:
-# Autodiscover docker containers and parse logs
   providers:
     - type: docker
       templates:
+        - condition:
+            equals.docker.container.image: busybox
           config:
-            - type: docker
-              containers.ids:
-                - "${data.docker.container.id}"
+            - type: log
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
 
-#=========================== Filebeat inputs ==============================
-filebeat.inputs:
-#------------------------------ Docker input --------------------------------
-- type: docker
-  enabled: true
-  containers.ids:
-    - "*"
-  paths:
-    - /var/lib/docker/containers/${data.docker.container.id}/*.log
-  # json.message_key: log
-  # json.add_error_key: true
-  # json.keys_under_root: true
-  exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
-  multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
-  multiline.match: after
-  processors:
-    - add_docker_metadata: ~
-    - add_cloud_metadata: ~
-    - add_locale: ~
-
-#------------------------------ Log input --------------------------------
-# - type: log
-#   enabled: true
-#   paths:
-#     - '/var/lib/docker/containers/*/*.log'
-#   json.message_key: log
-#   json.add_error_key: true
-#   json.keys_under_root: true
-#   processors:
-#     - add_docker_metadata: ~
-#     - add_cloud_metadata: ~
-#     - add_locale: ~
-#   multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
-#   multiline.match: after
-#
-# - type: log
-#   enabled: false
-#   paths:
-#     # path to jenkins build logs
-#     - /var/lib/docker/volumes/jenkins_home/_data/jobs/*/builds/*/log
-#   json.message_key: log
-#   json.add_error_key: true
-#   json.keys_under_root: true
-#   multiline.pattern: '^[[:space:]]+|^Caused by:'
-#   multiline.negate: false
-#   multiline.match: after
+#================================ Processors ===================================
+processors:
+- add_cloud_metadata: ~
+- add_docker_metadata: ~
+- add_locale:
+    format: offset
+- add_host_metadata:
+    netinfo.enabled: true
 
 #========================== Elasticsearch output ===============================
 output.elasticsearch:
@@ -83,14 +50,17 @@ output.elasticsearch:
   username: ${ELASTICSEARCH_USERNAME}
   password: ${ELASTICSEARCH_PASSWORD}
 
-xpack.monitoring:
-  enabled: true
-  elasticsearch:
-
 #============================== Dashboards =====================================
 setup.dashboards:
   enabled: true
+
+#============================== Kibana =========================================
 setup.kibana:
   host: "${KIBANA_HOST}:80"
   username: ${ELASTICSEARCH_USERNAME}
   password: ${ELASTICSEARCH_PASSWORD}
+
+#============================== Xpack Monitoring ===============================
+xpack.monitoring:
+  enabled: true
+  elasticsearch:

@@ -10,6 +10,7 @@ As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.c
 # Assumptions
 * Infrastructre is setup in [Docker swarm mode](https://docs.docker.com/engine/swarm/)
 * All containerized custom applications are designed to start with [GELF](http://docs.graylog.org/en/2.2/pages/gelf.html) log driver in order to send logs to Elastic Stack
+* **NOTE:** for cases where filebeat is to be run in "[Docker for AWS](https://docs.docker.com/docker-for-aws/)": you will need to turn off [auditd](./elk/beats/filebeat/config/filebeat.yml) module in the filebeat config. Otherwise, filebeat service will fail to run
 
 # Architecture
 The architecture used is shown in the table below
