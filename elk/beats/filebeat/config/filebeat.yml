@@ -18,28 +18,18 @@ filebeat.inputs:
     stream: all # can be all, stdout or stderr
     ids:
       - '*'
-  exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
-  multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
-  multiline.match: after
+  # exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+  # multiline.pattern: "^\t|^[[:space:]]+(at|...)|^Caused by:"
+  # multiline.match: after
 
 #========================== Filebeat autodiscover ==============================
-# Autodiscover allows you to detect changes in the system and spawn new modules or inputs as they happen.
+# See this URL on how to run Apache2 Filebeat module: # https://www.elastic.co/guide/en/beats/filebeat/current/running-on-docker.html
 filebeat.autodiscover:
   providers:
     - type: docker
-      templates:
-        - condition:
-            equals.docker.container.image: busybox
-          # config:
-          #   - type: log
-          #     paths:
-          #       - /var/lib/docker/containers/${data.docker.container.id}/*.log
-          # # This configuration launches a docker logs input for all containers running an image with busybox in the name.
-          config:
-            - type: docker
-              containers.ids:
-                - "${data.docker.container.id}"
-              exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+      # https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover-hints.html
+      # This URL alos contains instructions on multi-line logs
+      hints.enabled: true
 
 #================================ Processors ===================================
 processors:
