@@ -30,10 +30,16 @@ filebeat.autodiscover:
       templates:
         - condition:
             equals.docker.container.image: busybox
+          # config:
+          #   - type: log
+          #     paths:
+          #       - /var/lib/docker/containers/${data.docker.container.id}/*.log
+          # # This configuration launches a docker logs input for all containers running an image with busybox in the name.
           config:
-            - type: log
-              paths:
-                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+            - type: docker
+              containers.ids:
+                - "${data.docker.container.id}"
+              exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
 
 #================================ Processors ===================================
 processors:
