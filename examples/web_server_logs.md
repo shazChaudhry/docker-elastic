@@ -9,8 +9,9 @@ docker container run \
 --label co.elastic.metrics/metricsets=status \
 --label co.elastic.metrics/hosts='${data.host}:${data.port}' \
 --detach=true \
---name httpd \
+--name apache \
 --publish 80:80 \
+--network elastic \
 httpd:2.4
 ```
 
@@ -27,6 +28,7 @@ docker container run \
 --detach=true \
 --name nginx \
 --publish 80:80 \
+--network elastic \
 nginx
 ```
 
