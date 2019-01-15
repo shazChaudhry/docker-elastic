@@ -1,7 +1,7 @@
 #### Filebeat Apache2 module
 This example has been taken from https://www.elastic.co/guide/en/beats/filebeat/current/running-on-docker.html#_customize_your_configuration
 ```
-docker run \
+docker container run \
 --label co.elastic.logs/module=apache2 \
 --label co.elastic.logs/fileset.stdout=access \
 --label co.elastic.logs/fileset.stderr=error \
@@ -10,14 +10,14 @@ docker run \
 --label co.elastic.metrics/hosts='${data.host}:${data.port}' \
 --detach=true \
 --name httpd \
--p 80:80 \
+--publish 80:80 \
 httpd:2.4
 ```
 
 #### Filebeat Nginx module
 Ensure there is nothing listening on port 80 e.g. stop httpd
 ```
-docker run \
+docker container run \
 --label co.elastic.logs/module=nginx \
 --label co.elastic.logs/fileset.stdout=access \
 --label co.elastic.logs/fileset.stderr=error \
@@ -26,7 +26,7 @@ docker run \
 --label co.elastic.metrics/hosts='${data.host}:${data.port}' \
 --detach=true \
 --name nginx \
--p 80:80 \
+--publish 80:80 \
 nginx
 ```
 
