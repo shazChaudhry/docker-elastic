@@ -1,4 +1,4 @@
-The examples here are for learning purpose only and have been taken from GitHub [Elasticsearch examples](https://github.com/elastic/examples) that are available to everyone. It's a great way to get started.
+The examples here are for learning purpose only and show how to start filebeat and then visualize data in kibana. The examples here have been taken from GitHub [Elasticsearch examples](https://github.com/elastic/examples) that are available to everyone.
 
 ### Versions
 Example has been tested in following versions:
