@@ -8,7 +8,7 @@ Example has been tested in following versions:
 
 
 ### Prerequisites
-Use the proved Vagrantfile to create 3x VMs:
+Use the provided Vagrantfile to create 3x VMs:
 - node1 and node2 _(Docker Swarm cluster)_ are for running ElasticSearch, Kibana and Logstash in swarm mode
   - Follow the instructions in [../README.md](../README.md) to deploy the Elastic Stack
 - node3 is where filebeat examples below will be running
@@ -19,9 +19,12 @@ Use the proved Vagrantfile to create 3x VMs:
 
 In order to achieve this we use the Filebeat [Nginx module](https://www.elastic.co/guide/en/beats/filebeat/6.0/filebeat-module-nginx.html) per Elastic Stack best practices.
 
-Assuming you are on node3, [install](https://www.elastic.co/guide/en/beats/filebeat/6.5/filebeat-installation.html) filebeat and download [sample data](https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs) in "./nginx_logs" directory. Then execute the command below:
+Assuming you are on node3, execute the commands below:
 ```
-sudo /usr/bin/filebeat -e --modules=nginx --setup  -M "nginx.access.var.paths=[nginx_logs/nginx_logs]" \
+mkdir nginx_logs && cd nginx_logs && wget https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs
+
+docker container run --name filebeat --rm --network host --volume filebeat:/usr/share/filebeat/data --volume $PWD:/tmp docker.elastic.co/beats/filebeat:6.5.4 \
+-e --modules=nginx --setup  -M "nginx.access.var.paths=[/tmp/nginx_logs]" \
 -E output.elasticsearch.hosts='node1:9200' \
 -E output.elasticsearch.username=elastic \
 -E output.elasticsearch.password=changeme \
@@ -32,13 +35,33 @@ sudo /usr/bin/filebeat -e --modules=nginx --setup  -M "nginx.access.var.paths=[n
 -E xpack.monitoring.enabled=true \
 -E xpack.monitoring.elasticsearch=
 ```
+
+Visualize data in Kibana _([Filebeat Nginx] Overview dashboard)_ by chhanging the time period from `2015-05-16 00:00:00.000` to `2015-06-05 23:59:59.999`
 
 ### Exploring Public Datasets
 [NYC traffic accidents](https://github.com/elastic/examples/tree/master/Exploring%20Public%20Datasets/nyc_traffic_accidents) was used as an example that demonstrates how to analyze & visualize New York City traffic incident data using the Elastic Stack, i.e. Elasticsearch and Kibana. The [NYPD Motor Vehicle Collision data](https://data.cityofnewyork.us/Public-Safety/NYPD-Motor-Vehicle-Collisions/h9gi-nx95?) analyzed in this example is from the [NYC Open Data](https://opendata.cityofnewyork.us/) initiative.
 
-Assuming you are on node3, [install](https://www.elastic.co/guide/en/beats/filebeat/6.5/filebeat-installation.html) filebeat and download sample data files. Then execute the command below:
+Assuming you are on node3, execute the commands below:
 ```
-sudo /usr/bin/filebeat -e -c /etc/filebeat/nyc_collision_filebeat.yml \
+mkdir nyc_collision && cd nyc_collision && \
+# nyc_collision_data.csv - CSV version of the NYPD Motor Vehicle Collision dataset
+wget https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv?accessType=DOWNLOAD -O nyc_collision_data.csv && \
+# nyc_collision_filebeat.yml - Filebeat config for ingesting data into Elasticsearch
+wget https://raw.githubusercontent.com/elastic/examples/master/Exploring%20Public%20Datasets/nyc_traffic_accidents/nyc_collision_filebeat.yml && \
+# nyc_collision_template.json - template for custom mapping of fields
+wget https://raw.githubusercontent.com/elastic/examples/master/Exploring%20Public%20Datasets/nyc_traffic_accidents/nyc_collision_template.json && \
+# nyc_collision_kibana.json - config file to load prebuilt Kibana dashboard
+wget https://raw.githubusercontent.com/elastic/examples/master/Exploring%20Public%20Datasets/nyc_traffic_accidents/nyc_collision_kibana.json && \
+# nyc_collision_pipeline - ingest pipeline for processing csv lines
+wget https://raw.githubusercontent.com/elastic/examples/master/Exploring%20Public%20Datasets/nyc_traffic_accidents/nyc_collision_pipeline.json && \
+curl -XPUT -u elastic:changeme -H 'Content-Type: application/json' 'node1:9200/_ingest/pipeline/nyc_collision' -d @nyc_collision_pipeline.json && \
+curl -XPUT -u elastic:changeme -H 'Content-Type: application/json' 'node1:9200/_template/nyc_collision' -d @nyc_collision_template.json && \
+chmod go-w ./nyc_collision_filebeat.yml
+```
+Modify the paths to `/tmp/nyc_collision_data.csv` and replace the word _prospectors_ with `inputs` in nyc_collision_filebeat.yml
+```
+docker container run --name filebeat --rm --network host --volume filebeat:/usr/share/filebeat/data --volume $PWD:/tmp docker.elastic.co/beats/filebeat:6.5.4 \
+-e -c /tmp/nyc_collision_filebeat.yml \
 -E output.elasticsearch.hosts='node1:9200' \
 -E output.elasticsearch.username=elastic \
 -E output.elasticsearch.password=changeme \
@@ -49,3 +72,6 @@ sudo /usr/bin/filebeat -e -c /etc/filebeat/nyc_collision_filebeat.yml \
 -E xpack.monitoring.enabled=true \
 -E xpack.monitoring.elasticsearch=
 ```
+Follow the "[Visualize data in Kibana](https://github.com/elastic/examples/tree/master/Exploring%20Public%20Datasets/nyc_traffic_accidents#2-visualize-data-in-kibana)" instrictions to see data in Kibana
+
+For time period, select `Last 5 years`
