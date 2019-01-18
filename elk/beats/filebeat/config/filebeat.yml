@@ -9,7 +9,7 @@ filebeat.modules:
 - module: auditd
   log:
     # Does not look like Auditd is supported in Alpine linux: https://github.com/linuxkit/linuxkit/issues/52
-    enabled: true
+    enabled: false
 
 filebeat.inputs:
 - type: docker
