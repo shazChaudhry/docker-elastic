@@ -41,6 +41,7 @@ services:
 networks:
   elastic:
     external: true
+    name: host
 
 volumes:
   filebeat:
