@@ -1,0 +1,47 @@
+version: "3.7"
+
+# https://www.elastic.co/guide/en/beats/auditbeat/current/auditbeat-overview.html
+# Does not look like Auditd is supported in Alpine linux: https://github.com/linuxkit/linuxkit/issues/52
+
+services:
+
+  auditbeat:
+    image: docker.elastic.co/beats/auditbeat:${ELASTIC_VERSION:-6.5.0}
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: "{{.Node.Hostname}}-auditbeat"
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    # https://www.elastic.co/guide/en/beats/auditbeat/current/running-on-docker.html#_special_requirements
+    # PID and CAP_ADD options are ignored as they are Not yet available in swarm mode. Might be available in mid 2019
+    # pid: host
+    # cap_add:
+    #   - AUDIT_CONTROL
+    #   - AUDIT_READ
+    networks:
+      - elastic
+    configs:
+      - source: ab_config
+        target: /usr/share/auditbeat/auditbeat.yml
+    volumes:
+      - auditbeat:/usr/share/auditbeat/data
+      - /var/log:/var/log:ro
+    environment:
+      - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1}
+      - KIBANA_HOST=${KIBANA_HOST:-node1}
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME:-elastic}
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
+    command: ["--strict.perms=false"]
+    deploy:
+      mode: global
+
+networks:
+  elastic:
+    external: true
+    # name: host
+
+volumes:
+  auditbeat:
+
+configs:
+  ab_config:
+    file: $PWD/elk/beats/auditbeat/config/auditbeat.yml

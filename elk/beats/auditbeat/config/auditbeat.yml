@@ -1,0 +1,46 @@
+# https://github.com/elastic/beats/blob/master/filebeat/filebeat.reference.yml
+
+auditbeat.modules:
+
+- module: auditd
+  audit_rules: |
+    -w /etc/passwd -p wa -k identity
+    -a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat,open_by_handle_at -F exit=-EPERM -k access
+
+- module: file_integrity
+  paths:
+    - /bin
+    - /usr/bin
+    - /sbin
+    - /usr/sbin
+    - /etc
+
+#================================ Processors ===================================
+processors:
+- add_cloud_metadata: ~
+# - add_docker_metadata: ~
+# - add_locale: ~
+# - add_host_metadata:
+#     netinfo.enabled: true
+# - add_process_metadata: ~
+
+#========================== Elasticsearch output ===============================
+output.elasticsearch:
+  hosts: ["${ELASTICSEARCH_HOST}:9200"]
+  username: ${ELASTICSEARCH_USERNAME}
+  password: ${ELASTICSEARCH_PASSWORD}
+
+#============================== Dashboards =====================================
+setup.dashboards:
+  enabled: true
+
+#============================== Kibana =========================================
+setup.kibana:
+  host: "${KIBANA_HOST}:80"
+  username: ${ELASTICSEARCH_USERNAME}
+  password: ${ELASTICSEARCH_PASSWORD}
+
+#============================== Xpack Monitoring ===============================
+xpack.monitoring:
+  enabled: true
+  elasticsearch:
