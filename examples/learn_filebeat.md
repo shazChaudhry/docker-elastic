@@ -2,9 +2,9 @@ The examples here are for learning purpose only and show how to start filebeat a
 
 ### Versions
 Example has been tested in following versions:
-- Elasticsearch 6.5.4
-- Kibana 6.5.4
-- Filebeat 6.5.4
+- Elasticsearch 6.6.0
+- Kibana 6.6.0
+- Filebeat 6.6.0
 
 
 ### Prerequisites
@@ -23,7 +23,7 @@ Assuming you are on node3, execute the commands below:
 ```
 mkdir nginx_logs && cd nginx_logs && wget https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs
 
-docker container run --name filebeat --rm --network host --volume filebeat:/usr/share/filebeat/data --volume $PWD:/tmp docker.elastic.co/beats/filebeat:6.5.4 \
+docker container run --name filebeat --rm --network host --volume filebeat:/usr/share/filebeat/data --volume $PWD:/tmp docker.elastic.co/beats/filebeat:6.6.0 \
 -e --modules=nginx --setup  -M "nginx.access.var.paths=[/tmp/nginx_logs]" \
 -E output.elasticsearch.hosts='node1:9200' \
 -E output.elasticsearch.username=elastic \
@@ -60,7 +60,7 @@ chmod go-w ./nyc_collision_filebeat.yml
 ```
 Modify the paths to `/tmp/nyc_collision_data.csv` and replace the word _prospectors_ with `inputs` in nyc_collision_filebeat.yml
 ```
-docker container run --name filebeat --rm --network host --volume filebeat:/usr/share/filebeat/data --volume $PWD:/tmp docker.elastic.co/beats/filebeat:6.5.4 \
+docker container run --name filebeat --rm --network host --volume filebeat:/usr/share/filebeat/data --volume $PWD:/tmp docker.elastic.co/beats/filebeat:6.6.0 \
 -e -c /tmp/nyc_collision_filebeat.yml \
 -E output.elasticsearch.hosts='node1:9200' \
 -E output.elasticsearch.username=elastic \

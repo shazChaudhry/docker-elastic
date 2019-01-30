@@ -9,10 +9,10 @@ Use the proved Vagrantfile to create 3x VMs:
 
 ### Versions
 Example has been tested in following versions:
-- Elasticsearch 6.5.4
-- Kibana 6.5.4
-- Filebeat 6.5.4
-- Metricbeat 6.5.4
+- Elasticsearch 6.6.0
+- Kibana 6.6.0
+- Filebeat 6.6.0
+- Metricbeat 6.6.0
 
 ### Elastic Stack - Apache2 module
 Ensure there is nothing listening on port 80.
