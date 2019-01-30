@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export ELASTIC_VERSION=6.5.4
+export ELASTIC_VERSION=6.6.0
 export ELASTICSEARCH_USERNAME=elastic
 export ELASTICSEARCH_PASSWORD=changeme
 export ELASTICSEARCH_HOST=node1
