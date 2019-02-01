@@ -44,22 +44,23 @@ processors:
 - add_cloud_metadata: ~
 - add_locale: ~
 
-#-------------------------- Elasticsearch output -------------------------------
+#========================== Elasticsearch output ===============================
 output.elasticsearch:
   hosts: ["${ELASTICSEARCH_HOST}:9200"]
   username: ${ELASTICSEARCH_USERNAME}
   password: ${ELASTICSEARCH_PASSWORD}
 
-xpack.monitoring:
-  enabled: false
-  elasticsearch:
-
 #============================== Dashboards =====================================
-# These settings control loading the sample dashboards to the Kibana index.
-# Loading the dashboards is disabled by default and can be enabled either by setting the options here, or by using the `-setup` CLI flag.
 setup.dashboards:
   enabled: true
+
+#============================== Kibana =========================================
 setup.kibana:
   host: "${KIBANA_HOST}:80"
   username: ${ELASTICSEARCH_USERNAME}
   password: ${ELASTICSEARCH_PASSWORD}
+
+#============================== Xpack Monitoring ===============================
+xpack.monitoring:
+  enabled: true
+  elasticsearch:

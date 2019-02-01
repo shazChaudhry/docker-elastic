@@ -1,0 +1,29 @@
+These instructions are to be executed on each node where packetbeat is required to be run
+
+Firstly, set the system variables as needed:
+- export ELASTIC_VERSION=6.6.0
+- export ELASTICSEARCH_USERNAME=elastic
+- export ELASTICSEARCH_PASSWORD=changeme
+- export ELASTICSEARCH_HOST=node1
+- export KIBANA_HOST=node1
+- export NODE_NAME=node1
+
+And than run the command below:
+```
+    docker container run \
+    --rm --detach \
+    --hostname=${NODE_NAME:-node1}-packetbeat \
+    --name=packetbeat \
+    --user=root \
+    --volume=$PWD/elk/beats/packetbeat/config/packetbeat.yml:/usr/share/packetbeat/packetbeat.yml \
+    --volume=/var/run/docker.sock:/var/run/docker.sock \
+    --cap-add="NET_RAW" \
+    --cap-add="NET_ADMIN" \
+    --network=host \
+    --env ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME:-elastic} \
+    --env ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme} \
+    --env ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1} \
+    --env KIBANA_HOST=${KIBANA_HOST:-node1} \
+    docker.elastic.co/beats/packetbeat:6.6.0 \
+    --strict.perms=false
+```
