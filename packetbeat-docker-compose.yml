@@ -20,6 +20,11 @@ services:
       - KIBANA_HOST=${KIBANA_HOST:-node1}
       - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME:-elastic}
       - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
+      # Eagerly waiting for Docker 19.06 release which will bring --privileged flag to Docker #Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187
+      # support for capabilities https://github.com/moby/moby/pull/38380
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
     command: ["--strict.perms=false"]
     deploy:
       mode: global

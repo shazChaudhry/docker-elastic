@@ -81,7 +81,9 @@ Execute the following commands to deploy filebeat and metricbeat:
   * Running the following command should print elasticsearch index and one of the rows should have _metricbeat-*_
     * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
   * `docker stack deploy --compose-file packetbeat-docker-compose.yml packetbeat` _(Packetbeat starts as a global service on all docker swarm nodes)_
-  > NOTE: Packetbeat does not appear to work in docker swarm mode. See https://discuss.elastic.co/t/run-packetbeat-in-docker-swarm-mode/129937
+  > NOTE: Packetbeat does not appear to work in docker swarm mode at the moment. See https://discuss.elastic.co/t/run-packetbeat-in-docker-swarm-mode/129937 for details. Support for capabilities is coming in v19.06 _(hopefully)_ https://github.com/moby/moby/pull/38380. This will also bring --privileged flag to Docker Swarm Mod _(hopefully)_ https://github.com/moby/moby/issues/24862#issuecomment-451594187
+  
+  > Until capabilities are available in swarm mode, you can run packetbeat container on each required node by following [./README.packetbeat.md](./README.packetbeat.md)
 
 # Testing
 Wait until all stacks above are started and are up and running and then run jenkins container where filebeat is running:
