@@ -1,4 +1,6 @@
-These instructions are to be executed on each node where packetbeat is required to be run
+Eagerly waiting for Docker 19.06 release which will bring --privileged flag to Docker Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187. support for capabilities https://github.com/moby/moby/pull/38380
+
+Until capabilities are availale in docker swarm mode, execute te following instructions on each node where packetbeat is required:
 
 Firstly, set the system variables as needed:
 - export ELASTIC_VERSION=6.6.0
@@ -24,6 +26,6 @@ And than run the command below:
     --env ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme} \
     --env ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1} \
     --env KIBANA_HOST=${KIBANA_HOST:-node1} \
-    docker.elastic.co/beats/packetbeat:6.6.0 \
+    docker.elastic.co/beats/packetbeat:${ELASTIC_VERSION:-6.6.0} \
     --strict.perms=false
 ```
