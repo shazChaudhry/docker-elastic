@@ -23,7 +23,12 @@ Assuming you are on node3, execute the commands below:
 ```
 mkdir nginx_logs && cd nginx_logs && wget https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs
 
-docker container run --name filebeat --rm --network host --volume filebeat:/usr/share/filebeat/data --volume $PWD:/tmp docker.elastic.co/beats/filebeat:6.6.0 \
+docker container run --rm \
+--name filebeat \
+--network host \
+--volume filebeat:/usr/share/filebeat/data \
+--volume $PWD:/tmp \
+docker.elastic.co/beats/filebeat:6.6.0 \
 -e --modules=nginx --setup  -M "nginx.access.var.paths=[/tmp/nginx_logs]" \
 -E output.elasticsearch.hosts='node1:9200' \
 -E output.elasticsearch.username=elastic \

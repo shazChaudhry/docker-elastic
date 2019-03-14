@@ -1,3 +1,5 @@
+> NOTE: Packetbeat does not appear to work in Swarm mode at the moment. See https://discuss.elastic.co/t/run-packetbeat-in-docker-swarm-mode/129937 for details. Support for capabilities is coming in v19.06 _(hopefully)_ https://github.com/moby/moby/pull/38380. This will also bring --privileged flag to Docker Swarm Mod _(hopefully)_ https://github.com/moby/moby/issues/24862#issuecomment-451594187
+
 Eagerly waiting for Docker 19.06 release which will bring --privileged flag to Docker Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187. support for capabilities https://github.com/moby/moby/pull/38380
 
 Until capabilities are availale in docker swarm mode, execute te following instructions on each node where packetbeat is required:

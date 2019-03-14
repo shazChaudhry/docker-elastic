@@ -42,7 +42,7 @@ For the full list of free features that are included in the basic license, see: 
   * `sudo echo 'vm.max_map_count=262144' >> /etc/sysctl.conf` (to persist reboots)
 
 # Get docker compose files
-You will need thse file to deploy Eleasticsearch, Logstash, Kibana, and Beats. So, first SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack and clone this repo by following these commands:
+You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats. So, first SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack and clone this repo by following these commands:
   * `alias git='docker run -it --rm --name git -v $PWD:/git -w /git alpine/git'` _(This alias is only required if git is *not* already installed on your machine. This alias will allow you to clone the repo using a git container)_
   * `git version`
   * `git clone https://github.com/shazChaudhry/docker-elastic.git`
@@ -54,13 +54,13 @@ You will need thse file to deploy Eleasticsearch, Logstash, Kibana, and Beats. S
   * `export ELASTIC_VERSION=6.6.0`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
-  * `export ELASTICSEARCH_HOST=node1`
+  * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to one of your VMs in the swarm cluster)_
   * `docker network create --driver overlay --attachable elastic`
-  * `docker stack deploy --compose-file docker-compose.yml elastic` _(This will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means data nodes will be scalled out automatically as soon as new nodes are added to the docker swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488)_
+  * `docker stack deploy --compose-file docker-compose.yml elastic` _(Assuming you have only two VMs, this will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means elasticsearch data nodes will be scalled out automatically as soon as new VMs are added to the Swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488)_
 * Check status of the stack services by running the following commands:
   * `docker stack services elastic`
   * `docker stack ps --no-trunc elastic` _(address any error reported at this point)_
-  * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal)_
+  * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/health?v&pretty'` _(Inspect cluster helth status which sould be green. It should also show 2x nodes in todal assuming you only have two VMs in the cluster)_
 * If in case beats are also desired to be installed in this very docker swarm cluster, then use the instructions provided in the next section
 
 # Deploy Beats
@@ -76,14 +76,10 @@ Execute the following commands to deploy filebeat and metricbeat:
   * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to picks up container logs for all services at '`/var/lib/docker/containers/*/*.log`' (container stdout and stderr logs) and forward thtem to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations. You may wish to read [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices))_
   * Running the following command should print elasticsearch index and one of the rows should have _filebeat-*_
     * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
-  * Edit "metricbeat-docker-compose.yml" file. Change environment variables for Kibana and Elasticseaerch hosts
   * `docker stack deploy --compose-file metricbeat-docker-compose.yml metricbeat`  _(Metricbeat starts as a global service on all docker swarm nodes. It sends system and docker stats from each node to Elasticsearch. These stats will then be available under metricbeat index in Kibana)_
   * Running the following command should print elasticsearch index and one of the rows should have _metricbeat-*_
     * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
-  * `docker stack deploy --compose-file packetbeat-docker-compose.yml packetbeat` _(Packetbeat starts as a global service on all docker swarm nodes)_
-  > NOTE: Packetbeat does not appear to work in docker swarm mode at the moment. See https://discuss.elastic.co/t/run-packetbeat-in-docker-swarm-mode/129937 for details. Support for capabilities is coming in v19.06 _(hopefully)_ https://github.com/moby/moby/pull/38380. This will also bring --privileged flag to Docker Swarm Mod _(hopefully)_ https://github.com/moby/moby/issues/24862#issuecomment-451594187
-  
-  > Until capabilities are available in swarm mode, you can run packetbeat container on each required node by following [./README.packetbeat.md](./README.packetbeat.md)
+  <!-- * `docker stack deploy --compose-file packetbeat-docker-compose.yml packetbeat` _(Packetbeat starts as a global service on all docker swarm nodes)_ -->
 
 # Testing
 Wait until all stacks above are started and are up and running and then run jenkins container where filebeat is running:
@@ -91,7 +87,7 @@ Wait until all stacks above are started and are up and running and then run jenk
 * Login at `http://[KIBANA_HOST]` which should show Management tab
   * username = `elastic`
   * password = `changeme`
-* On the Kibana Management tab, configure an index pattern
+* On the Kibana Management tab, configure an index pattern _(if not already done automatically)_
   * Index name or pattern = `filebeat-*`
   * Time-field name = `@timestamp`
 * Click on Kibana Discover tab to view containers' console logs _(including Jenkins)_ under filebeat-* index. Here is a screenshot showing Jenkins container logs:

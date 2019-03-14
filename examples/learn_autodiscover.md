@@ -1,7 +1,7 @@
 The purpose of these exmaples is to learn how to used [filebeat](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover-hints.html#configuration-autodiscover-hints) and [metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover.html#configuration-autodiscover) hint based autodiscover features for docker containers
 
 ### Prerequisites
-Use the proved Vagrantfile to create 3x VMs:
+Use the provided Vagrantfile to create 3x VMs:
 - node1 and node2 _(Docker Swarm cluster)_ are for running ElasticSearch, Kibana and Logstash in swarm mode
   - Follow the instructions in [../README.md](../README.md) to deploy Elastic Stack
 - node3 is for running filebeat and metricbeat in swarm mode. See instructions in [../README.md](../README.md)
@@ -19,7 +19,7 @@ Ensure there is nothing listening on port 80.
 
 This example has been taken from https://www.elastic.co/guide/en/beats/filebeat/current/running-on-docker.html#_customize_your_configuration
 ```
-docker container run \
+docker container run --rm \
 --label co.elastic.logs/module=apache2 \
 --label co.elastic.logs/fileset.stdout=access \
 --label co.elastic.logs/fileset.stderr=error \
@@ -29,15 +29,13 @@ docker container run \
 --detach=true \
 --name apache \
 --publish 80:80 \
---network elastic \
---rm \
-httpd:2.4
+httpd:latest
 ```
 
 ### Elastic Stack - Nginx module
 Ensure there is nothing listening on port 80
 ```
-docker container run \
+docker container run --rm \
 --label co.elastic.logs/module=nginx \
 --label co.elastic.logs/fileset.stdout=access \
 --label co.elastic.logs/fileset.stderr=error \
@@ -47,9 +45,7 @@ docker container run \
 --detach=true \
 --name nginx \
 --publish 80:80 \
---network elastic \
---rm \
-nginx
+nginx:latest
 ```
 
 ### Test
