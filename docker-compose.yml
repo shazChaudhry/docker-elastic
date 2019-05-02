@@ -49,8 +49,8 @@ services:
       - network.host=0.0.0.0
     networks:
       - elastic
-    # volumes:
-    #   - elasticsearch:/usr/share/elasticsearch/data
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
     deploy:
       mode: 'global'
       endpoint_mode: dnsrr
@@ -86,8 +86,8 @@ services:
       - SERVER_NAME="{{.Node.Hostname}}-kibana"
     networks:
       - elastic
-    # volumes:
-    #   - kibana:/usr/share/kibana/data
+    volumes:
+      - kibana:/usr/share/kibana/data
     deploy:
       labels:
         - com.df.notify=true
