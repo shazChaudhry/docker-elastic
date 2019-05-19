@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   metricbeat:
-    image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION:-7.0.0}
+    image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION:-7.0.1}
     # https://github.com/docker/swarmkit/issues/1951
     hostname: "{{.Node.Hostname}}-metricbeat"
     user: root
