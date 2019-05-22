@@ -43,15 +43,14 @@ For the full list of free features that are included in the basic license, see: 
 
 # Get docker compose files
 You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats. So, first SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack and clone this repo by following these commands:
-  * `alias git='docker run -it --rm --name git -v $PWD:/git -w /git alpine/git'` _(This alias is only required if git is *not* already installed on your machine. This alias will allow you to clone the repo using a git container)_
+  * `alias git='docker run -it --rm --name git -u $(id -u ${USER}):$(id -g ${USER}) -v $PWD:/git -w /git alpine/git'` _(This alias is only required if git is *not* already installed on your machine. This alias will allow you to clone the repo using a git container)_
   * `git version`
   * `git clone https://github.com/shazChaudhry/docker-elastic.git`
-  * `sudo chown -R $USER:$USER docker-elastic`
   * `cd docker-elastic`
 
 # Deploy Elastic Stack
 * SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack. Deploy Elastic stack by running the following commands:
-  * `export ELASTIC_VERSION=7.0.1`
+  * `export ELASTIC_VERSION=7.1.0`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
   * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to one of your VMs in the swarm cluster)_
@@ -67,7 +66,7 @@ You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats.
 SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions above.
 
 Execute the following commands to deploy filebeat and metricbeat:
-  * `export ELASTIC_VERSION=7.0.1`
+  * `export ELASTIC_VERSION=7.1.0`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
   * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to your Elasticsearch host)_

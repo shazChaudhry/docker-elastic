@@ -23,5 +23,5 @@ after_script:
   - docker stack services elastic
   - docker stack ps elastic
   #List all Elasticsearch Indices. One entry sould be for logstash containing console logs for Jenkins
-  - curl -XGET -u elastic:changeme '127.0.1.1:9200/_cat/indices?v&pretty'
+  - curl -XGET -u elastic:changeme '127.1.0.1:9200/_cat/indices?v&pretty'
   - ./removeStack.sh
