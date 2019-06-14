@@ -4,12 +4,12 @@
 $docker_swarm_init = <<SCRIPT
 docker swarm init --advertise-addr 192.168.99.101 --listen-addr 192.168.99.101:2377
 docker swarm join-token --quiet worker > /vagrant/worker_token
+docker swarm join-token --quiet manager > /vagrant/manager_token
 SCRIPT
 
 Vagrant.configure("2") do |config|
-	# https://app.vagrantup.com/ralfkrause/boxes/centos7
-	config.vm.box 									= "ralfkrause/centos7"
-	config.vm.box_version 					= "1.0.0"
+	# https://app.vagrantup.com/bento/boxes/ubuntu-18.04
+	config.vm.box 									= "bento/ubuntu-18.04"
 	config.hostmanager.enabled 			= true
 	config.hostmanager.manage_host 	= true
 	config.hostmanager.manage_guest = true
@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
 		node1.vm.network :private_network, ip: "192.168.99.101"
 		node1.vm.provider :virtualbox do |v|
 			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-			v.customize ["modifyvm", :id, "--memory", 4000]
+			v.customize ["modifyvm", :id, "--memory", 3000]
 			v.customize ["modifyvm", :id, "--name", "node1"]
 		end
 		node1.vm.provision :shell, inline: $docker_swarm_init

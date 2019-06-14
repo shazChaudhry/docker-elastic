@@ -34,18 +34,17 @@ services:
       - BIND_PORTS=9200
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-6.7.0}
-    # https://github.com/docker/swarmkit/issues/1951
-    hostname: "{{.Node.Hostname}}-elasticsearch"
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.1.1}
     environment:
-      - discovery.zen.ping.unicast.hosts=elasticsearch
-      - discovery.zen.minimum_master_nodes=1
+      # https://github.com/docker/swarmkit/issues/1951
+      - node.name={{.Node.Hostname}}
+      - discovery.seed_hosts=elasticsearch
+      - cluster.initial_master_nodes=${INITIAL_MASTER_NODES:-node1}
+      - cluster.name=DevOps
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
       - xpack.security.enabled=true
       - xpack.monitoring.collection.enabled=true
       - xpack.license.self_generated.type=trial
-      - cluster.name=DevOps
-      - node.name={{.Node.Hostname}}-elasticsearch
       - network.host=0.0.0.0
     networks:
       - elastic
@@ -62,7 +61,7 @@ services:
         - com.df.srcPort=9200
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-6.7.0}
+    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-7.1.1}
     hostname: "{{.Node.Hostname}}-logstash"
     environment:
       - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
@@ -77,7 +76,7 @@ services:
         target: /usr/share/logstash/pipeline/logstash.conf
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-6.7.0}
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.1.1}
     hostname: "{{.Node.Hostname}}-kibana"
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
