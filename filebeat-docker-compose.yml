@@ -5,7 +5,7 @@ services:
   # How to Tune Elastic Beats Performance: A Practical Example with Batch Size, Worker Count, and More
   # https://www.elastic.co/blog/how-to-tune-elastic-beats-performance-a-practical-example-with-batch-size-worker-count-and-more?blade=tw&hulk=social
   filebeat:
-    image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION:-7.1.0}
+    image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION:-7.1.1}
     # https://github.com/docker/swarmkit/issues/1951
     hostname: "{{.Node.Hostname}}-filebeat"
     # Need to override user so we can access the log files, and docker.sock

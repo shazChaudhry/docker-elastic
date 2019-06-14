@@ -4,6 +4,7 @@
 $docker_swarm_init = <<SCRIPT
 docker swarm init --advertise-addr 192.168.99.101 --listen-addr 192.168.99.101:2377
 docker swarm join-token --quiet worker > /vagrant/worker_token
+docker swarm join-token --quiet manager > /vagrant/manager_token
 SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -21,7 +22,7 @@ Vagrant.configure("2") do |config|
 		node1.vm.network :private_network, ip: "192.168.99.101"
 		node1.vm.provider :virtualbox do |v|
 			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-			v.customize ["modifyvm", :id, "--memory", 4000]
+			v.customize ["modifyvm", :id, "--memory", 3000]
 			v.customize ["modifyvm", :id, "--name", "node1"]
 		end
 		node1.vm.provision :shell, inline: $docker_swarm_init
@@ -35,18 +36,51 @@ Vagrant.configure("2") do |config|
 			v.customize ["modifyvm", :id, "--memory", 3000]
 			v.customize ["modifyvm", :id, "--name", "node2"]
 		end
-		node2.vm.provision :shell, inline: "docker swarm join --token $(cat /vagrant/worker_token) 192.168.99.101:2377"
+		node2.vm.provision :shell, inline: "docker swarm join --token $(cat /vagrant/manager_token) 192.168.99.101:2377"
 	end
 
-  config.vm.define "node3" do |node3|
+	config.vm.define "node3" do |node3|
 		node3.vm.hostname = 'node3'
 		node3.vm.network :private_network, ip: "192.168.99.103"
 		node3.vm.provider :virtualbox do |v|
 			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-			v.customize ["modifyvm", :id, "--memory", 2000]
+			v.customize ["modifyvm", :id, "--memory", 3000]
 			v.customize ["modifyvm", :id, "--name", "node3"]
 		end
-		node3.vm.provision :shell, inline: "docker swarm init --advertise-addr 192.168.99.103 --listen-addr 192.168.99.103:2377"
+		node3.vm.provision :shell, inline: "docker swarm join --token $(cat /vagrant/manager_token) 192.168.99.101:2377"
+	end
+
+	config.vm.define "node4" do |node4|
+		node4.vm.hostname = 'node4'
+		node4.vm.network :private_network, ip: "192.168.99.104"
+		node4.vm.provider :virtualbox do |v|
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+			v.customize ["modifyvm", :id, "--memory", 3000]
+			v.customize ["modifyvm", :id, "--name", "node4"]
+		end
+		node4.vm.provision :shell, inline: "docker swarm join --token $(cat /vagrant/worker_token) 192.168.99.101:2377"
+	end
+
+	config.vm.define "node5" do |node5|
+		node5.vm.hostname = 'node5'
+		node5.vm.network :private_network, ip: "192.168.99.105"
+		node5.vm.provider :virtualbox do |v|
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+			v.customize ["modifyvm", :id, "--memory", 3000]
+			v.customize ["modifyvm", :id, "--name", "node5"]
+		end
+		node5.vm.provision :shell, inline: "docker swarm join --token $(cat /vagrant/worker_token) 192.168.99.101:2377"
+	end
+
+  config.vm.define "node6" do |node6|
+		node6.vm.hostname = 'node6'
+		node6.vm.network :private_network, ip: "192.168.99.106"
+		node6.vm.provider :virtualbox do |v|
+			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+			v.customize ["modifyvm", :id, "--memory", 2000]
+			v.customize ["modifyvm", :id, "--name", "node6"]
+		end
+		node6.vm.provision :shell, inline: "docker swarm init --advertise-addr 192.168.99.106 --listen-addr 192.168.99.106:2377"
 	end
 
 end

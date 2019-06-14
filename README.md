@@ -50,9 +50,10 @@ You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats.
 
 # Deploy Elastic Stack
 * SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack. Deploy Elastic stack by running the following commands:
-  * `export ELASTIC_VERSION=7.1.0`
+  * `export ELASTIC_VERSION=7.1.1`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
+  * `export INITIAL_MASTER_NODES=node1` _(See Important discovery and cluster formation settings: https://www.elastic.co/guide/en/elasticsearch/reference/current/discovery-settings.html#initial_master_nodes)_
   * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to one of your VMs in the swarm cluster)_
   * `docker network create --driver overlay --attachable elastic`
   * `docker stack deploy --compose-file docker-compose.yml elastic` _(Assuming you have only two VMs, this will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means elasticsearch data nodes will be scalled out automatically as soon as new VMs are added to the Swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488)_
@@ -66,7 +67,7 @@ You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats.
 SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions above.
 
 Execute the following commands to deploy filebeat and metricbeat:
-  * `export ELASTIC_VERSION=7.1.0`
+  * `export ELASTIC_VERSION=7.1.1`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
   * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to your Elasticsearch host)_
