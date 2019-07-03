@@ -117,7 +117,8 @@ Here is another example:
 * You can use syslog as well as TLS if you wish to add in your own certs
 
 # References
-- [Elastic Examples](https://github.com/elastic/examples)
+- [elastic/examples](https://github.com/elastic/examples) - Home for Elasticsearch examples available to everyone. It's a great way to get started
+- [elastic/stack-docker](https://github.com/elastic/stack-docker) - The Elastic Stack, on Docker, right now.
 - [Unifying APM, Logs, and Metrics for Deeper Operational Visibility](https://www.elastic.co/webinars/agumenting-logs-and-metrics-with-apm?blade=tw&hulk=social)
 - [ Machine Learning in the Elastic Stack - YouTube](https://www.youtube.com/watch?v=n6xW6YWYgs0&feature=youtu.be)
 - [Monitoring Modern Banking API Architectures with the Elastic Stack, Part II](https://www.elastic.co/blog/psd2-architectures-with-the-elastic-stack-part-ii)
