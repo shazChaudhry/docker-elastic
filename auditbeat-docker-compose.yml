@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 # https://www.elastic.co/guide/en/beats/auditbeat/current/auditbeat-overview.html
 # Does not look like Auditd is supported in Alpine linux: https://github.com/linuxkit/linuxkit/issues/52
