@@ -8,9 +8,9 @@ docker swarm join-token --quiet manager > /vagrant/manager_token
 SCRIPT
 
 Vagrant.configure("2") do |config|
-	# https://app.vagrantup.com/bento/boxes/ubuntu-18.04
-	config.vm.box 									= "bento/ubuntu-18.04"
-	config.hostmanager.enabled 			= true
+	# https://app.vagrantup.com/bento/boxes/ubuntu-20.04
+	config.vm.box                   = "bento/ubuntu-20.04"
+	config.hostmanager.enabled 		= true
 	config.hostmanager.manage_host 	= true
 	config.hostmanager.manage_guest = true
 	config.vm.provision "docker"

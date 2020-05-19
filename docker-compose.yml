@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 # 10 Things to Consider When Planning Your Elasticsearch Project: https://ecmarchitect.com/archives/2015/07/27/4031
 # Using Apache JMeter to Test Elasticsearch: https://ecmarchitect.com/archives/2014/09/02/3915
@@ -34,7 +34,7 @@ services:
       - BIND_PORTS=9200
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.1.1}
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.7.0}
     environment:
       # https://github.com/docker/swarmkit/issues/1951
       - node.name={{.Node.Hostname}}
@@ -61,7 +61,7 @@ services:
         - com.df.srcPort=9200
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-7.1.1}
+    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-7.7.0}
     hostname: "{{.Node.Hostname}}-logstash"
     environment:
       - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
@@ -76,7 +76,7 @@ services:
         target: /usr/share/logstash/pipeline/logstash.conf
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.1.1}
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-7.7.0}
     hostname: "{{.Node.Hostname}}-kibana"
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200

@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 # https://www.elastic.co/guide/en/beats/auditbeat/current/auditbeat-overview.html
 # Does not look like Auditd is supported in Alpine linux: https://github.com/linuxkit/linuxkit/issues/52
@@ -6,7 +6,7 @@ version: "3.7"
 services:
 
   auditbeat:
-    image: docker.elastic.co/beats/auditbeat:${ELASTIC_VERSION:-7.1.1}
+    image: docker.elastic.co/beats/auditbeat:${ELASTIC_VERSION:-7.7.0}
     # https://github.com/docker/swarmkit/issues/1951
     hostname: "{{.Node.Hostname}}-auditbeat"
     # Need to override user so we can access the log files, and docker.sock

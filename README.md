@@ -50,7 +50,7 @@ You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats.
 
 # Deploy Elastic Stack
 * SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack. Deploy Elastic stack by running the following commands:
-  * `export ELASTIC_VERSION=7.1.1`
+  * `export ELASTIC_VERSION=7.7.0`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
   * `export INITIAL_MASTER_NODES=node1` _(See Important discovery and cluster formation settings: https://www.elastic.co/guide/en/elasticsearch/reference/current/discovery-settings.html#initial_master_nodes)_
@@ -67,7 +67,7 @@ You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats.
 SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions above.
 
 Execute the following commands to deploy filebeat and metricbeat:
-  * `export ELASTIC_VERSION=7.1.1`
+  * `export ELASTIC_VERSION=7.7.0`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
   * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to your Elasticsearch host)_
