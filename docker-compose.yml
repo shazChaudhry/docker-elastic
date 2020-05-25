@@ -44,6 +44,7 @@ services:
       - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
       - xpack.security.enabled=true
       - xpack.monitoring.collection.enabled=true
+      - xpack.security.audit.enabled=true
       - xpack.license.self_generated.type=trial
       - network.host=0.0.0.0
     networks:
