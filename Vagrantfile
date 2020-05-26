@@ -13,6 +13,7 @@ Vagrant.configure("2") do |config|
 	config.hostmanager.enabled 		= true
 	config.hostmanager.manage_host 	= true
 	config.hostmanager.manage_guest = true
+	config.vm.provision :shell, inline: "apt-get install -y auditd audispd-plugins"
 	config.vm.provision "docker"
 	config.vm.provision :shell, inline: "sysctl -w vm.max_map_count=262144"
 
