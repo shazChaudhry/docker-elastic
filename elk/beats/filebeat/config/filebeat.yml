@@ -13,12 +13,12 @@ filebeat.modules:
     # this is probably something you would want to install. (sudo apt-get install -y auditd audispd-plugins)
     enabled: true
 
-filebeat.inputs:
-- type: container
-  enabled: true
-  paths:
-    -/var/lib/docker/containers/*/*.log
-  stream: all # can be all, stdout or stderr
+#filebeat.inputs:
+#- type: container
+#  enabled: true
+#  paths:
+#    -/var/lib/docker/containers/*/*.log
+#  stream: all # can be all, stdout or stderr
 
 #========================== Filebeat autodiscover ==============================
 # See this URL on how to run Apache2 Filebeat module: # https://www.elastic.co/guide/en/beats/filebeat/current/running-on-docker.html
