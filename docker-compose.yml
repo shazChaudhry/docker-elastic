@@ -60,6 +60,10 @@ services:
         - com.df.servicePath=/
         - com.df.port=9200
         - com.df.srcPort=9200
+    healthcheck:
+      interval: 20s
+      retries: 10
+      test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
 
   logstash:
     image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION:-7.7.0}
@@ -95,6 +99,10 @@ services:
         - com.df.servicePath=/
         - com.df.port=5601
         - com.df.srcPort=80
+    healthcheck:
+      interval: 20s
+      retries: 20
+      test: curl -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5601/api/status
 
 networks:
     elastic:
