@@ -32,6 +32,8 @@ services:
       - LISTENER_ADDRESS=swarm-listener
       - MODE=swarm
       - BIND_PORTS=9200
+    deploy:
+      replicas: 2
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.7.0}
