@@ -1,7 +1,6 @@
 ### Vagrant Box prerequisites
-- The user has admin privileges on the development machine
-- This solution was developed on a Windows 10 pro machine and so a similar machine is aussumed here 
-- At least 9GB of free RAM is available on the machine. Otherwise, Vagrantfile will need editing to adjust the available memory:
+- The user has admin privileges on their development machines
+- At least 20GB of free RAM is available on the machine. Otherwise, Vagrantfile will need editing to adjust the available memory:
   - `v.customize ["modifyvm", :id, "--memory", <MEMORY_ALLOCATION>]`
 - Latest version of [Oracle VM VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 - Latest version of [Git for Windows](https://git-scm.com/downloads)
