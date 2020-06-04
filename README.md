@@ -1,7 +1,7 @@
 [![Build Status on Travis](https://travis-ci.org/shazChaudhry/docker-elastic.svg?branch=server.basePath "CI build status on Travis")](https://travis-ci.org/shazChaudhry/docker-elastic)
 
 # User story
-As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.co/products) so that all application and system logs are collected centrally for searching, visualizing, analyzing and reporting purpose
+As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.co/products) _(v7.7.0 by default)_ so that all application and system logs are collected centrally for searching, visualizing, analyzing and reporting purpose
 
 <p align="center">
   <img src="./pics/elastic-products.PNG" alt="Elastic products" style="width: 400px;"/>
@@ -21,8 +21,11 @@ The architecture used is shown in the table below
     <th>Not in scope</th>
   </tr>
   <tr>
-    <td><img src="./pics/elastic_stack_without_logstash.png" alt="Elastic Stack" style="width: 400px;"/></td>
-    <td>Only beats for log files and metrics are used. 2x Elasticsearch and 1x Kibana are used</td>
+    <td><img src="./pics/elastic-stack-arch.png" alt="Elastic Stack" style="width: 400px;"/></td>
+    <td>
+      Only beats for log files and metrics are used. All logs and metrics are shipped to elasticsearch directly in this repo. </br>
+      2x Elasticsearch, 1x apm-server and 1x Kibana are used.
+    </td>
     <td>Ingest nodes are not used</td>
   </tr>
   <tr>
@@ -35,11 +38,10 @@ The architecture used is shown in the table below
 For the full list of free features that are included in the basic license, see: https://www.elastic.co/subscriptions
 
 # Prerequisite
-* A docker swarm mode cluster allocated to running Elastic Stack must have at least two nodes; 1x master and 1x worker
-* A docekr swarm mode cluster allocated to running containerized custom applications must have at least on node; 1x master
-* On each Elasticsearch cluster node, maximum map count check should be set to as follows:  _(required to run Elasticsearch)_
+* One docker swarm mode cluster allocated to running Elastic Stack. This cluster must have at least two nodes; 1x master and 1x worker. On each Elasticsearch cluster node, maximum map count check should be set to as follows:  _(required to run Elasticsearch)_
   * `sudo sysctl -w vm.max_map_count=262144`
   * `sudo echo 'vm.max_map_count=262144' >> /etc/sysctl.conf` (to persist reboots)
+* One docekr swarm mode cluster allocated to running containerized custom applications. This cluster must have at least on node; 1x master
 
 # Get docker compose files
 You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats. So, first SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack and clone this repo by following these commands:
@@ -115,6 +117,12 @@ Here is another example:
 * `docker container run --rm -it --log-driver=gelf --log-opt gelf-address=udp://${LOGSTASH_HOST}:12201 alpine ping 8.8.8.8`
 * Login to Kibana and you should see traffic coming into Elasticsearch under `logstash-*` index
 * You can use syslog as well as TLS if you wish to add in your own certs
+
+# Testing with APM Java Agent
+Follow these instructions to build a java app that we will use for APM:
+```
+WIP
+```
 
 # References
 - [elastic/examples](https://github.com/elastic/examples) - Home for Elasticsearch examples available to everyone. It's a great way to get started

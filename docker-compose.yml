@@ -26,12 +26,15 @@ services:
       - "80:80"
       - "443:443"
       - "9200:9200"
+      - "8200:8200"
     networks:
       - elastic
     environment:
       - LISTENER_ADDRESS=swarm-listener
       - MODE=swarm
-      - BIND_PORTS=9200
+      - BIND_PORTS=9200,8200
+    deploy:
+      replicas: 2
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.7.0}
@@ -95,7 +98,35 @@ services:
         - com.df.servicePath=/
         - com.df.port=5601
         - com.df.srcPort=80
-
+  
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:${ELASTIC_VERSION:-7.7.0}
+    hostname: "{{.Node.Hostname}}-apm-server"
+    networks:
+      - elastic
+    command: > 
+        --strict.perms=false -e
+        -E apm-server.rum.enabled=true
+        -E setup.kibana.host=kibana:5601
+        -E setup.kibana.username=${ELASTICSEARCH_USERNAME}
+        -E setup.kibana.password=${ELASTICSEARCH_PASSWORD}
+        -E setup.template.settings.index.number_of_replicas=0
+        -E apm-server.kibana.enabled=true
+        -E apm-server.kibana.host=kibana:5601
+        -E apm-server.kibana.username=${ELASTICSEARCH_USERNAME}
+        -E apm-server.kibana.password=${ELASTICSEARCH_PASSWORD}
+        -E output.elasticsearch.hosts=["elasticsearch:9200"]
+        -E output.elasticsearch.username=${ELASTICSEARCH_USERNAME}
+        -E output.elasticsearch.password=${ELASTICSEARCH_PASSWORD}
+        -E xpack.monitoring.enabled=true
+    deploy:
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.servicePath=/
+        - com.df.port=8200
+        - com.df.srcPort=8200
+      
 networks:
     elastic:
       external: true
