@@ -1,7 +1,7 @@
 [![Build Status on Travis](https://travis-ci.org/shazChaudhry/docker-elastic.svg?branch=server.basePath "CI build status on Travis")](https://travis-ci.org/shazChaudhry/docker-elastic)
 
 # User story
-As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.co/products) _(v7.7.0 by default)_ so that all application and system logs are collected centrally for searching, visualizing, analyzing and reporting purpose
+As a DevOps team member, I want to install [Elastic Stack](https://www.elastic.co/products) _(v7.9.1 by default)_ so that all application and system logs are collected centrally for searching, visualizing, analyzing and reporting purpose
 
 <p align="center">
   <img src="./pics/elastic-products.PNG" alt="Elastic products" style="width: 400px;"/>
@@ -52,13 +52,15 @@ You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats.
 
 # Deploy Elastic Stack
 * SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack. Deploy Elastic stack by running the following commands:
-  * `export ELASTIC_VERSION=7.7.0`
+  * `export ELASTIC_VERSION=7.9.1`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
   * `export INITIAL_MASTER_NODES=node1` _(See Important discovery and cluster formation settings: https://www.elastic.co/guide/en/elasticsearch/reference/current/discovery-settings.html#initial_master_nodes)_
   * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to one of your VMs in the swarm cluster)_
   * `docker network create --driver overlay --attachable elastic`
-  * `docker stack deploy --compose-file docker-compose.yml elastic` _(Assuming you have only two VMs, this will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means elasticsearch data nodes will be scalled out automatically as soon as new VMs are added to the Swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488)_
+  * `docker stack deploy --compose-file docker-compose.yml elastic` 
+    * You will need to be a little patient and wait for about 5 mins to allow stack to be ready
+    * Assuming you have only two VMs, this will deploy a reverse proxy, logstash, Kibana and 2x Elasticsearch instances in Master / data nodes configuration. Please note that Elasticsearch is configured to start as a global service which means elasticsearch data nodes will be scalled out automatically as soon as new VMs are added to the Swarm cluster. Here is an explaination on various Elasticsearch cluster nodes: https://discuss.elastic.co/t/node-types-in-an-elasticsearch-cluster/25488
 * Check status of the stack services by running the following commands:
   * `docker stack services elastic`
   * `docker stack ps --no-trunc elastic` _(address any error reported at this point)_
@@ -69,15 +71,19 @@ You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats.
 SSH in to the master node of the Docker Swarm cluster allocated to running containerized custom applicatins and beats. Clone this repo and change directory as per the instructions above.
 
 Execute the following commands to deploy filebeat and metricbeat:
-  * `export ELASTIC_VERSION=7.7.0`
+  * `export ELASTIC_VERSION=7.9.1`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
   * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to your Elasticsearch host)_
   * `export KIBANA_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to your Kibana host)_
   * `docker network create --driver overlay --attachable elastic`
+
+## Filebeat
   * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to picks up container logs for all services at '`/var/lib/docker/containers/*/*.log`' (container stdout and stderr logs) and forward thtem to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations. You may wish to read [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices))_
   * Running the following command should print elasticsearch index and one of the rows should have _filebeat-*_
     * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
+
+## Metricbeat
   * `docker stack deploy --compose-file metricbeat-docker-compose.yml metricbeat`  _(Metricbeat starts as a global service on all docker swarm nodes. It sends system and docker stats from each node to Elasticsearch. These stats will then be available under metricbeat index in Kibana)_
   * Running the following command should print elasticsearch index and one of the rows should have _metricbeat-*_
     * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
