@@ -55,7 +55,7 @@ You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats.
   * `export ELASTIC_VERSION=7.9.1`
   * `export ELASTICSEARCH_USERNAME=elastic`
   * `export ELASTICSEARCH_PASSWORD=changeme`
-  * `export INITIAL_MASTER_NODES=node1` _(See Important [discovery and cluster formation settings](https://www.elastic.co/guide/en/elasticsearch/reference/7.10/modules-discovery-hosts-providers.html))_
+  * `export INITIAL_MASTER_NODES=node1` _(See Important [discovery and cluster formation settings](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-hosts-providers.html))_
   * `export ELASTICSEARCH_HOST=node1` _(node1 is default value if you are creating VirtualBox with the provided Vagrantfile. Otherwise, change this value to one of your VMs in the swarm cluster)_
   * `docker network create --driver overlay --attachable elastic`
   * `docker stack deploy --compose-file docker-compose.yml elastic` 
