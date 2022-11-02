@@ -41,7 +41,7 @@ For the full list of free features that are included in the basic license, see: 
 * One docker swarm mode cluster allocated to running Elastic Stack. This cluster must have at least two nodes; 1x master and 1x worker. On each Elasticsearch cluster node, maximum map count check should be set to as follows:  _(required to run Elasticsearch)_
   * `sudo sysctl -w vm.max_map_count=262144`
   * `sudo echo 'vm.max_map_count=262144' >> /etc/sysctl.conf` (to persist reboots)
-* One docekr swarm mode cluster allocated to running containerized custom applications. This cluster must have at least on node; 1x master
+* One docker swarm mode cluster allocated to running containerized custom applications. This cluster must have at least on node; 1x master
 
 # Get docker compose files
 You will need these files to deploy Eleasticsearch, Logstash, Kibana, and Beats. So, first SSH in to the master node of the Docker Swarm cluster allocated to running Elastic Stack and clone this repo by following these commands:
@@ -79,7 +79,7 @@ Execute the following commands to deploy filebeat and metricbeat:
   * `docker network create --driver overlay --attachable elastic`
 
 ## Filebeat
-  * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to pick up container logs for all services at '`/var/lib/docker/containers/*/*.log`' (container stdout and stderr logs) and forward thtem to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations. You may wish to read [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices))_
+  * `docker stack deploy --compose-file filebeat-docker-compose.yml filebeat`  _(Filebeat starts as a global service on all docker swarm nodes. It is only configured to pick up container logs for all services at '`/var/lib/docker/containers/*/*.log`' (container stdout and stderr logs) and forward them to Elasticsearch. These logs will then be available under filebeat index in Kibana. You will need to add additional configurations for other log locations. You may wish to read [Docker Reference Architecture: Docker Logging Design and Best Practices](https://success.docker.com/article/docker-reference-architecture-docker-logging-design-and-best-practices))_
   * Running the following command should print elasticsearch index and one of the rows should have _filebeat-*_
     * `curl -XGET -u ${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD} ${ELASTICSEARCH_HOST}':9200/_cat/indices?v&pretty'`
 
